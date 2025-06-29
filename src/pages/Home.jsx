@@ -17,9 +17,9 @@ export function Home() {
                     <h1 className="text-4xl md:text-5xl font-bold mb-6">Préservez votre héritage numérique pour les générations futures</h1>
                     <p className="text-xl mb-8">Créez des capsules temporelles numériques sécurisées sur la blockchain pour transmettre vos documents importants, souvenirs et messages à vos proches.</p>
                     <div className="flex flex-col sm:flex-row gap-4">
-                        <button className="bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-button whitespace-nowrap font-medium">
+                        <a href="#create-my-capsule" className="bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-button whitespace-nowrap font-medium">
                             Créer ma première capsule
-                        </button>
+                        </a>
                         <button className="bg-white hover:bg-gray-100 text-primary px-6 py-3 rounded-button whitespace-nowrap font-medium">
                             En savoir plus
                         </button>
@@ -29,7 +29,7 @@ export function Home() {
         </section>
 
         {/* Main Features Section */}
-        <section className="py-16 bg-white">
+        <section className="py-16 bg-white" id="how-it-works">
             <div className="container mx-auto px-4">
                 <div className="text-center mb-16">
                     <h2 className="text-3xl font-bold mb-4">Comment fonctionne CapsuleTemps</h2>
@@ -68,7 +68,7 @@ export function Home() {
 
 
         {/* Create Capsule Section */}
-        <section className="py-16 bg-gray-50">
+        <section className="py-16 bg-gray-50" id="create-my-capsule">
             <div className="container mx-auto px-4">
                 <div className="bg-white rounded-xl shadow-md overflow-hidden">
                     <div className="p-6 md:p-8">
@@ -92,9 +92,9 @@ export function Home() {
 
                         <div class="tab-content" id="pills-tabContent">
 
-                            <div className="grid md:grid-cols-2 gap-8 tab-pane fade show active" id="pills-documents" role="tabpanel" aria-labelledby="pills-documents-tab" tabindex="0">
+                            <div className="row d-flex tab-pane fade show active" id="pills-documents" role="tabpanel" aria-labelledby="pills-documents-tab" tabindex="0">
                                 {/* Left Column: Upload Area */}
-                                <div>
+                                <div className="col-lg-7">
                                     <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center mb-6 hover:border-primary/50 transition-colors">
                                         <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                                             <i className="ri-upload-cloud-line ri-2x text-gray-500"></i>
@@ -171,7 +171,7 @@ export function Home() {
                                 </div>
 
                                 {/* Right Column: Settings */}
-                                <div>
+                                <div className="col-lg-5">
                                     <div className="mb-6">
                                         <label className="block text-sm font-medium text-gray-700 mb-2">Nom de la capsule</label>
                                         <input type="text" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary" placeholder="Ex: Testament familial" />
@@ -262,7 +262,7 @@ export function Home() {
                             </div>
                             <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab" tabindex="0">...</div>
                             <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab" tabindex="0">...</div>
-                        
+
                         </div>
 
                     </div>
@@ -271,7 +271,7 @@ export function Home() {
         </section>
 
         {/* My Capsules Section */}
-        <section className="py-16 bg-white">
+        <section className="py-16 bg-white" id="my-capsules">
             <div className="container mx-auto px-4">
                 <div className="flex justify-between items-center mb-8">
                     <h2 className="text-2xl font-bold">Mes capsules temporelles</h2>
@@ -283,12 +283,19 @@ export function Home() {
                             </div>
                         </div>
                         <div className="relative">
-                            <button className="flex items-center px-4 py-2 border border-gray-300 rounded-lg text-gray-700">
-                                <span>Trier par</span>
-                                <div className="w-4 h-4 flex items-center justify-center ml-2">
-                                    <i className="ri-arrow-down-s-line"></i>
-                                </div>
-                            </button>
+                            <div class="dropdown">
+                                <button class="flex items-center px-4 py-2 border border-gray-300 rounded-lg text-gray-700" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <span>Trier par</span>
+                                    <div className="w-4 h-4 flex items-center justify-center ml-2">
+                                        <i className="ri-arrow-down-s-line"></i>
+                                    </div>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="#">Action</a></li>
+                                    <li><a class="dropdown-item" href="#">Another action</a></li>
+                                    <li><a class="dropdown-item" href="#">Something else here</a></li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -535,7 +542,7 @@ export function Home() {
         </section>
 
         {/* FAQ Section */}
-        <section className="py-16 bg-gray-50">
+        <section className="py-16 bg-gray-50" id="faq">
             <div className="container mx-auto px-4">
                 <div className="text-center mb-12">
                     <h2 className="text-3xl font-bold mb-4">Questions fréquentes</h2>
@@ -556,9 +563,9 @@ export function Home() {
                 <h2 className="text-3xl font-bold mb-6">Commencez à préserver votre héritage numérique dès aujourd'hui</h2>
                 <p className="text-xl mb-8 max-w-2xl mx-auto">Rejoignez des milliers d'utilisateurs qui font confiance à CapsuleTemps pour sécuriser et transmettre leurs données importantes.</p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                    <button className="bg-white text-primary hover:bg-gray-100 px-6 py-3 rounded-button whitespace-nowrap font-medium">
+                    <a href="#create-my-capsule" className="bg-white text-primary hover:bg-gray-100 px-6 py-3 rounded-button whitespace-nowrap font-medium">
                         Créer ma première capsule
-                    </button>
+                    </a>
                     <button className="bg-transparent border border-white hover:bg-white/10 px-6 py-3 rounded-button whitespace-nowrap font-medium">
                         Découvrir nos forfaits
                     </button>

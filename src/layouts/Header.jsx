@@ -13,10 +13,10 @@ export function Header() {
             <div class="flex items-center">
                 <h1 class="text-2xl font-['Pacifico'] text-primary">CapsuleTemps</h1>
                 <nav class="hidden md:flex ml-10">
-                    <a href="#" class="px-4 py-2 text-gray-700 hover:text-primary font-medium">Accueil</a>
-                    <a href="#" class="px-4 py-2 text-gray-700 hover:text-primary font-medium">Comment ça marche</a>
-                    <a href="#" class="px-4 py-2 text-gray-700 hover:text-primary font-medium">Tarifs</a>
-                    <a href="#" class="px-4 py-2 text-gray-700 hover:text-primary font-medium">FAQ</a>
+                    <a href="/" class="px-4 py-2 text-gray-700 hover:text-primary font-medium">Accueil</a>
+                    <a href="#how-it-works" class="px-4 py-2 text-gray-700 hover:text-primary font-medium">Comment ça marche</a>
+                    <a href="#my-capsules" class="px-4 py-2 text-gray-700 hover:text-primary font-medium">Mes capsules</a>
+                    <a href="#faq" class="px-4 py-2 text-gray-700 hover:text-primary font-medium">FAQ</a>
                 </nav>
             </div>
             <div class="flex items-center space-x-4">
