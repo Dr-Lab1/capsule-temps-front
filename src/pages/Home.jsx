@@ -1,7 +1,7 @@
+import FAQ from "../layouts/Faq";
+import { useState } from 'react';
+
 export function Home() {
-
-    
-
 
     return <main>
         {/* Hero Section */}
@@ -64,6 +64,9 @@ export function Home() {
             </div>
         </section>
 
+
+
+
         {/* Create Capsule Section */}
         <section className="py-16 bg-gray-50">
             <div className="container mx-auto px-4">
@@ -72,180 +75,196 @@ export function Home() {
                         <h2 className="text-2xl font-bold mb-6">Créer une nouvelle capsule temporelle</h2>
 
                         {/* Tabs */}
-                        <div className="flex mb-8 bg-gray-100 p-1 rounded-full inline-block">
-                            <button className="tab-button active px-4 py-2 rounded-full whitespace-nowrap text-sm font-medium">Documents</button>
-                            <button className="tab-button px-4 py-2 rounded-full whitespace-nowrap text-sm font-medium text-gray-700">Message</button>
-                            <button className="tab-button px-4 py-2 rounded-full whitespace-nowrap text-sm font-medium text-gray-700">Clés privées</button>
+                        <div className="flex mb-8 bg-gray-100 p-1 rounded-full inline-block align-items-center">
+                            <ul class="nav nav-pills m-2" id="pills-tab" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <button class="tab-button active px-4 py-2 rounded-full whitespace-nowrap text-sm font-medium text-gray-700 nav-link" id="pills-documents-tab" data-bs-toggle="pill" data-bs-target="#pills-documents" type="button" role="tab" aria-controls="pills-documents" aria-selected="true">Documents</button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="tab-button px-4 py-2 rounded-full whitespace-nowrap text-sm font-medium text-gray-700 nav-link" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">Cryptos</button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="tab-button px-4 py-2 rounded-full whitespace-nowrap text-sm font-medium text-gray-700 nav-link" id="pills-contact-tab" data-bs-toggle="pill" data-bs-target="#pills-contact" type="button" role="tab" aria-controls="pills-contact" aria-selected="false">Messages</button>
+                                </li>
+                            </ul>
                         </div>
 
-                        <div className="grid md:grid-cols-2 gap-8">
-                            {/* Left Column: Upload Area */}
-                            <div>
-                                <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center mb-6 hover:border-primary/50 transition-colors">
-                                    <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                        <i className="ri-upload-cloud-line ri-2x text-gray-500"></i>
-                                    </div>
-                                    <h3 className="text-lg font-medium mb-2">Glissez-déposez vos fichiers ici</h3>
-                                    <p className="text-gray-500 text-sm mb-4">Formats supportés: PDF, JPG, PNG, MP4 (Max. 100MB)</p>
-                                    <button className="bg-primary text-white px-4 py-2 rounded-button whitespace-nowrap">
-                                        Parcourir les fichiers
-                                    </button>
-                                </div>
 
-                                <div className="mb-6">
-                                    <h3 className="text-lg font-medium mb-3">Fichiers sélectionnés</h3>
-                                    <div className="space-y-3">
-                                        <div className="flex items-center justify-between bg-gray-50 p-3 rounded-lg">
-                                            <div className="flex items-center">
-                                                <div className="w-10 h-10 flex items-center justify-center bg-blue-100 rounded-lg mr-3">
-                                                    <i className="ri-file-text-line ri-lg text-blue-600"></i>
-                                                </div>
-                                                <div>
-                                                    <p className="font-medium">titre_foncier_kinshasa.pdf</p>
-                                                    <p className="text-xs text-gray-500">2.4 MB</p>
-                                                </div>
-                                            </div>
-                                            <button className="text-gray-500 hover:text-red-500">
-                                                <i className="ri-delete-bin-line"></i>
-                                            </button>
-                                        </div>
+                        <div class="tab-content" id="pills-tabContent">
 
-                                        <div className="flex items-center justify-between bg-gray-50 p-3 rounded-lg">
-                                            <div className="flex items-center">
-                                                <div className="w-10 h-10 flex items-center justify-center bg-green-100 rounded-lg mr-3">
-                                                    <i className="ri-image-line ri-lg text-green-600"></i>
-                                                </div>
-                                                <div>
-                                                    <p className="font-medium">photo_famille_2024.jpg</p>
-                                                    <p className="text-xs text-gray-500">3.8 MB</p>
-                                                </div>
-                                            </div>
-                                            <button className="text-gray-500 hover:text-red-500">
-                                                <i className="ri-delete-bin-line"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-
+                            <div className="grid md:grid-cols-2 gap-8 tab-pane fade show active" id="pills-documents" role="tabpanel" aria-labelledby="pills-documents-tab" tabindex="0">
+                                {/* Left Column: Upload Area */}
                                 <div>
-                                    <h3 className="text-lg font-medium mb-3">Type de NFT</h3>
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div className="border border-gray-200 rounded-lg p-4 cursor-pointer hover:border-primary relative">
-                                            <input type="radio" name="nft-type" id="erc721" className="sr-only" checked />
-                                            <label for="erc721" className="flex flex-col items-center cursor-pointer">
-                                                <span className="w-8 h-8 flex items-center justify-center bg-primary/10 rounded-full mb-2">
-                                                    <i className="ri-nft-line text-primary"></i>
-                                                </span>
-                                                <span className="font-medium">ERC-721</span>
-                                                <span className="text-xs text-gray-500">NFT unique</span>
-                                            </label>
-                                            <div className="absolute top-3 right-3 w-4 h-4 bg-primary rounded-full"></div>
+                                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center mb-6 hover:border-primary/50 transition-colors">
+                                        <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                            <i className="ri-upload-cloud-line ri-2x text-gray-500"></i>
                                         </div>
-
-                                        <div className="border border-gray-200 rounded-lg p-4 cursor-pointer hover:border-primary">
-                                            <input type="radio" name="nft-type" id="erc1155" className="sr-only" />
-                                            <label for="erc1155" className="flex flex-col items-center cursor-pointer">
-                                                <span className="w-8 h-8 flex items-center justify-center bg-gray-100 rounded-full mb-2">
-                                                    <i className="ri-nft-line text-gray-500"></i>
-                                                </span>
-                                                <span className="font-medium">ERC-1155</span>
-                                                <span className="text-xs text-gray-500">NFT multiple</span>
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Right Column: Settings */}
-                            <div>
-                                <div className="mb-6">
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Nom de la capsule</label>
-                                    <input type="text" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary" placeholder="Ex: Testament familial" />
-                                </div>
-
-                                <div className="mb-6">
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Description (optionnelle)</label>
-                                    <textarea className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary" rows="3" placeholder="Décrivez le contenu de cette capsule..."></textarea>
-                                </div>
-
-                                <div className="mb-6">
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Bénéficiaires</label>
-                                    <div className="flex items-center mb-3">
-                                        <input type="text" className="flex-1 px-4 py-2 border border-gray-300 rounded-l-lg focus:ring-2 focus:ring-primary/50 focus:border-primary" placeholder="Adresse Ethereum ou ENS" />
-                                        <button className="bg-primary text-white px-4 py-2 rounded-r-lg whitespace-nowrap">
-                                            Ajouter
+                                        <h3 className="text-lg font-medium mb-2">Glissez-déposez vos fichiers ici</h3>
+                                        <p className="text-gray-500 text-sm mb-4">Formats supportés: PDF, JPG, PNG, MP4 (Max. 100MB)</p>
+                                        <button className="bg-primary text-white px-4 py-2 rounded-button whitespace-nowrap">
+                                            Parcourir les fichiers
                                         </button>
                                     </div>
-                                    <div className="space-y-2">
-                                        <div className="flex items-center justify-between bg-gray-50 p-2 rounded-lg">
-                                            <div className="flex items-center">
-                                                <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center mr-2">
-                                                    <i className="ri-user-line text-primary"></i>
+
+                                    <div className="mb-6">
+                                        <h3 className="text-lg font-medium mb-3">Fichiers sélectionnés</h3>
+                                        <div className="space-y-3">
+                                            <div className="flex items-center justify-between bg-gray-50 p-3 rounded-lg">
+                                                <div className="flex items-center">
+                                                    <div className="w-10 h-10 flex items-center justify-center bg-blue-100 rounded-lg mr-3">
+                                                        <i className="ri-file-text-line ri-lg text-blue-600"></i>
+                                                    </div>
+                                                    <div>
+                                                        <p className="font-medium">titre_foncier_kinshasa.pdf</p>
+                                                        <p className="text-xs text-gray-500">2.4 MB</p>
+                                                    </div>
                                                 </div>
-                                                <span className="text-sm">0x7Fc9...3E4b</span>
+                                                <button className="text-gray-500 hover:text-red-500">
+                                                    <i className="ri-delete-bin-line"></i>
+                                                </button>
                                             </div>
-                                            <button className="text-gray-500 hover:text-red-500">
-                                                <i className="ri-close-line"></i>
+
+                                            <div className="flex items-center justify-between bg-gray-50 p-3 rounded-lg">
+                                                <div className="flex items-center">
+                                                    <div className="w-10 h-10 flex items-center justify-center bg-green-100 rounded-lg mr-3">
+                                                        <i className="ri-image-line ri-lg text-green-600"></i>
+                                                    </div>
+                                                    <div>
+                                                        <p className="font-medium">photo_famille_2024.jpg</p>
+                                                        <p className="text-xs text-gray-500">3.8 MB</p>
+                                                    </div>
+                                                </div>
+                                                <button className="text-gray-500 hover:text-red-500">
+                                                    <i className="ri-delete-bin-line"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <h3 className="text-lg font-medium mb-3">Type de NFT</h3>
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div className="border border-gray-200 rounded-lg p-4 cursor-pointer hover:border-primary relative">
+                                                <input type="radio" name="nft-type" id="erc721" className="sr-only" checked />
+                                                <label for="erc721" className="flex flex-col items-center cursor-pointer">
+                                                    <span className="w-8 h-8 flex items-center justify-center bg-primary/10 rounded-full mb-2">
+                                                        <i className="ri-nft-line text-primary"></i>
+                                                    </span>
+                                                    <span className="font-medium">ERC-721</span>
+                                                    <span className="text-xs text-gray-500">NFT unique</span>
+                                                </label>
+                                                <div className="absolute top-3 right-3 w-4 h-4 bg-primary rounded-full"></div>
+                                            </div>
+
+                                            <div className="border border-gray-200 rounded-lg p-4 cursor-pointer hover:border-primary">
+                                                <input type="radio" name="nft-type" id="erc1155" className="sr-only" />
+                                                <label for="erc1155" className="flex flex-col items-center cursor-pointer">
+                                                    <span className="w-8 h-8 flex items-center justify-center bg-gray-100 rounded-full mb-2">
+                                                        <i className="ri-nft-line text-gray-500"></i>
+                                                    </span>
+                                                    <span className="font-medium">ERC-1155</span>
+                                                    <span className="text-xs text-gray-500">NFT multiple</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Right Column: Settings */}
+                                <div>
+                                    <div className="mb-6">
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">Nom de la capsule</label>
+                                        <input type="text" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary" placeholder="Ex: Testament familial" />
+                                    </div>
+
+                                    <div className="mb-6">
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">Description (optionnelle)</label>
+                                        <textarea className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary" rows="3" placeholder="Décrivez le contenu de cette capsule..."></textarea>
+                                    </div>
+
+                                    <div className="mb-6">
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">Bénéficiaires</label>
+                                        <div className="flex items-center mb-3">
+                                            <input type="text" className="flex-1 px-4 py-2 border border-gray-300 rounded-l-lg focus:ring-2 focus:ring-primary/50 focus:border-primary" placeholder="Adresse Ethereum ou ENS" />
+                                            <button className="bg-primary text-white px-4 py-2 rounded-r-lg whitespace-nowrap">
+                                                Ajouter
                                             </button>
                                         </div>
-                                    </div>
-                                </div>
-
-                                <div className="mb-6">
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Conditions de déverrouillage</label>
-                                    <div className="space-y-4">
-                                        <div className="flex items-center">
-                                            <input type="checkbox" id="date-condition" className="custom-checkbox mr-2" />
-                                            <label for="date-condition" className="text-sm">Date spécifique</label>
-                                        </div>
-                                        <div className="pl-8">
-                                            <input type="date" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary" />
-                                        </div>
-
-                                        <div className="flex items-center">
-                                            <input type="checkbox" id="inactivity-condition" className="custom-checkbox mr-2" checked />
-                                            <label for="inactivity-condition" className="text-sm">Période d'inactivité</label>
-                                        </div>
-                                        <div className="pl-8">
-                                            <div className="mb-2">
-                                                <input type="range" min="1" max="36" value="6" className="custom-range" />
-                                            </div>
-                                            <div className="flex justify-between text-xs text-gray-500">
-                                                <span>1 mois</span>
-                                                <span>6 mois</span>
-                                                <span>36 mois</span>
+                                        <div className="space-y-2">
+                                            <div className="flex items-center justify-between bg-gray-50 p-2 rounded-lg">
+                                                <div className="flex items-center">
+                                                    <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center mr-2">
+                                                        <i className="ri-user-line text-primary"></i>
+                                                    </div>
+                                                    <span className="text-sm">0x7Fc9...3E4b</span>
+                                                </div>
+                                                <button className="text-gray-500 hover:text-red-500">
+                                                    <i className="ri-close-line"></i>
+                                                </button>
                                             </div>
                                         </div>
+                                    </div>
 
-                                        <div className="flex items-center">
-                                            <input type="checkbox" id="oracle-condition" className="custom-checkbox mr-2" />
-                                            <label for="oracle-condition" className="text-sm">Événement externe (Oracle)</label>
+                                    <div className="mb-6">
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">Conditions de déverrouillage</label>
+                                        <div className="space-y-4">
+                                            <div className="flex items-center">
+                                                <input type="checkbox" id="date-condition" className="custom-checkbox mr-2" />
+                                                <label for="date-condition" className="text-sm">Date spécifique</label>
+                                            </div>
+                                            <div className="pl-8">
+                                                <input type="date" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary" />
+                                            </div>
+
+                                            <div className="flex items-center">
+                                                <input type="checkbox" id="inactivity-condition" className="custom-checkbox mr-2" checked />
+                                                <label for="inactivity-condition" className="text-sm">Période d'inactivité</label>
+                                            </div>
+                                            <div className="pl-8">
+                                                <div className="mb-2">
+                                                    <input type="range" min="1" max="36" value="6" className="custom-range" />
+                                                </div>
+                                                <div className="flex justify-between text-xs text-gray-500">
+                                                    <span>1 mois</span>
+                                                    <span>6 mois</span>
+                                                    <span>36 mois</span>
+                                                </div>
+                                            </div>
+
+                                            <div className="flex items-center">
+                                                <input type="checkbox" id="oracle-condition" className="custom-checkbox mr-2" />
+                                                <label for="oracle-condition" className="text-sm">Événement externe (Oracle)</label>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                <div className="mb-6">
-                                    <div className="flex items-center justify-between mb-2">
-                                        <label className="block text-sm font-medium text-gray-700">Cryptage avancé</label>
-                                        <label className="custom-switch">
-                                            <input type="checkbox" checked />
-                                            <span className="slider"></span>
-                                        </label>
+                                    <div className="mb-6">
+                                        <div className="flex items-center justify-between mb-2">
+                                            <label className="block text-sm font-medium text-gray-700">Cryptage avancé</label>
+                                            <label className="custom-switch">
+                                                <input type="checkbox" checked />
+                                                <span className="slider"></span>
+                                            </label>
+                                        </div>
+                                        <p className="text-xs text-gray-500">Le contenu sera crypté et ne pourra être déchiffré que par les bénéficiaires désignés.</p>
                                     </div>
-                                    <p className="text-xs text-gray-500">Le contenu sera crypté et ne pourra être déchiffré que par les bénéficiaires désignés.</p>
-                                </div>
 
-                                <div className="border-t border-gray-200 pt-6">
-                                    <div className="flex items-center justify-between mb-4">
-                                        <span className="text-sm text-gray-600">Frais de gas estimés:</span>
-                                        <span className="font-medium">~0.0042 ETH</span>
+                                    <div className="border-t border-gray-200 pt-6">
+                                        <div className="flex items-center justify-between mb-4">
+                                            <span className="text-sm text-gray-600">Frais de gas estimés:</span>
+                                            <span className="font-medium">~0.0042 ETH</span>
+                                        </div>
+                                        <button className="w-full bg-primary hover:bg-primary/90 text-white py-3 rounded-button whitespace-nowrap font-medium">
+                                            Créer ma capsule temporelle
+                                        </button>
                                     </div>
-                                    <button className="w-full bg-primary hover:bg-primary/90 text-white py-3 rounded-button whitespace-nowrap font-medium">
-                                        Créer ma capsule temporelle
-                                    </button>
                                 </div>
                             </div>
+                            <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab" tabindex="0">...</div>
+                            <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab" tabindex="0">...</div>
+                        
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -394,6 +413,7 @@ export function Home() {
                 </div>
             </div>
         </section>
+
         {/* Use Cases Section */}
         <section className="py-16 bg-gray-50">
             <div className="container mx-auto px-4">
@@ -524,53 +544,7 @@ export function Home() {
 
                 <div className="max-w-3xl mx-auto">
                     <div className="space-y-4">
-                        <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-                            <button className="w-full flex items-center justify-between p-4 text-left font-medium">
-                                <span>Comment fonctionne la technologie blockchain derrière CapsuleTemps ?</span>
-                                <div className="w-5 h-5 flex items-center justify-center text-primary">
-                                    <i className="ri-add-line"></i>
-                                </div>
-                            </button>
-                            <div className="px-4 pb-4 hidden">
-                                <p className="text-gray-600">CapsuleTemps utilise la blockchain Ethereum pour créer des NFTs (jetons non fongibles) qui représentent vos capsules temporelles. Le contenu réel est stocké de manière sécurisée sur IPFS ou Arweave, avec un cryptage de bout en bout. Les conditions de déverrouillage sont programmées via des contrats intelligents qui exécutent automatiquement les règles que vous définissez.</p>
-                            </div>
-                        </div>
-
-                        <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-                            <button className="w-full flex items-center justify-between p-4 text-left font-medium">
-                                <span>Ai-je besoin de connaissances techniques pour utiliser CapsuleTemps ?</span>
-                                <div className="w-5 h-5 flex items-center justify-center text-primary">
-                                    <i className="ri-add-line"></i>
-                                </div>
-                            </button>
-                            <div className="px-4 pb-4 hidden">
-                                <p className="text-gray-600">Non, CapsuleTemps est conçu pour être accessible à tous, même sans connaissances en cryptomonnaies ou en blockchain. Notre interface intuitive vous guide à travers chaque étape. Vous aurez simplement besoin d'un portefeuille numérique comme MetaMask, que nous vous aiderons à configurer si nécessaire.</p>
-                            </div>
-                        </div>
-
-                        <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-                            <button className="w-full flex items-center justify-between p-4 text-left font-medium">
-                                <span>Que se passe-t-il si je perds l'accès à mon portefeuille ?</span>
-                                <div className="w-5 h-5 flex items-center justify-center text-primary">
-                                    <i className="ri-add-line"></i>
-                                </div>
-                            </button>
-                            <div className="px-4 pb-4 hidden">
-                                <p className="text-gray-600">Nous recommandons fortement de conserver en lieu sûr votre phrase de récupération (seed phrase) de votre portefeuille. Cependant, CapsuleTemps propose également une option de récupération multi-signature qui permet de désigner des gardiens de confiance qui peuvent vous aider à récupérer l'accès à vos capsules en cas de perte de votre portefeuille principal.</p>
-                            </div>
-                        </div>
-
-                        <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-                            <button className="w-full flex items-center justify-between p-4 text-left font-medium">
-                                <span>Quels sont les frais associés à l'utilisation de CapsuleTemps ?</span>
-                                <div className="w-5 h-5 flex items-center justify-center text-primary">
-                                    <i className="ri-add-line"></i>
-                                </div>
-                            </button>
-                            <div className="px-4 pb-4 hidden">
-                                <p className="text-gray-600">CapsuleTemps facture des frais modestes pour la création de capsules temporelles, qui varient en fonction de la taille des fichiers et de la durée de stockage. Des frais de réseau (gas) s'appliquent également pour les transactions sur la blockchain Ethereum. Nous proposons plusieurs forfaits adaptés à différents besoins, avec des options de paiement en cryptomonnaies ou en monnaie fiduciaire.</p>
-                            </div>
-                        </div>
+                        <FAQ />
                     </div>
                 </div>
             </div>
