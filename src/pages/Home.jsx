@@ -1,24 +1,8 @@
 export function Home() {
 
-    function WalletConnectButton() {
-        const [connected, setConnected] = useState(false);
+    
 
-        const handleConnect = () => {
-            setConnected(true);
-        };
 
-        return (
-            <button
-                onClick={handleConnect}
-                className={`flex items-center px-4 py-2 rounded ${connected ? 'bg-green-600' : 'bg-blue-600'}`}
-            >
-                <div className="w-5 h-5 flex items-center justify-center mr-2">
-                    <i className="ri-wallet-3-line" />
-                </div>
-                {connected ? '0x7Fc9...3E4b' : 'Connect Wallet'}
-            </button>
-        );
-    }
     return <main>
         {/* Hero Section */}
         <section className="relative overflow-hidden"
