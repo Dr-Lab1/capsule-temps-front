@@ -1,7 +1,33 @@
 import FAQ from "../layouts/Faq";
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+
+import { ethers } from "ethers";
+import CapsuleNFT from "../abi/CapsuleNFT.json";
+
+const CONTRACT_ADDRESS = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"; // 🔁 remplace par l’adresse de ton contrat
 
 export function Home() {
+
+    const [capsule, setCapsule] = useState(null);
+
+    useEffect(() => {
+        const fetchCapsule = async () => {
+            if (!window.ethereum) return;
+
+            const provider = new ethers.BrowserProvider(window.ethereum);
+            const signer = await provider.getSigner();
+            const contract = new ethers.Contract(CONTRACT_ADDRESS, CapsuleNFT.abi, signer);
+
+            try {
+                const data = await contract.getCapsule(0); // tokenId = 0
+                setCapsule(data);
+            } catch (error) {
+                console.error("Erreur de lecture de la capsule :", error);
+            }
+        };
+
+        fetchCapsule();
+    }, []);
 
     return <main>
         {/* Hero Section */}
@@ -64,7 +90,14 @@ export function Home() {
             </div>
         </section>
 
-
+        <div>
+            <h1>Capsule Viewer</h1>
+            {capsule ? (
+                <pre>{JSON.stringify(capsule, null, 2)}</pre>
+            ) : (
+                <p>Aucune capsule chargée</p>
+            )}
+        </div>
 
 
         {/* Create Capsule Section */}
