@@ -6,9 +6,66 @@ import CapsuleNFT from "../abi/CapsuleNFT.json";
 
 const CONTRACT_ADDRESS = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"; // 🔁 remplace par l’adresse de ton contrat
 
-export function Home() {
+export default function Home() {
 
     const [capsule, setCapsule] = useState(null);
+    const [walletConnected, setWalletConnected] = useState(false);
+    const [contract, setContract] = useState(null);
+    const [signer, setSigner] = useState(null);
+    const [formData, setFormData] = useState({ heir: "", date: "", uri: "" });
+
+    // Connexion au wallet
+    async function connectWallet() {
+        if (!window.ethereum) return alert("Installez MetaMask !");
+        const provider = new ethers.BrowserProvider(window.ethereum);
+        const _signer = await provider.getSigner();
+        const _contract = new ethers.Contract(CONTRACT_ADDRESS, CapsuleNFT.abi, _signer);
+        setWalletConnected(true);
+        setSigner(_signer);
+        setContract(_contract);
+    }
+
+    // Création d'une capsule
+    async function mintCapsule() {
+        if (!contract) return;
+        const { heir, date, uri } = formData;
+        const unlockDate = Math.floor(new Date(date).getTime() / 1000);
+
+        const tx = await contract.mintCapsule(heir, unlockDate, uri, {
+            value: ethers.parseEther("0.01"),
+        });
+        await tx.wait();
+        alert("Capsule créée !");
+    }
+
+    // Récupérer une capsule
+    async function getCapsule(id) {
+        if (!contract) return;
+        try {
+            const data = await contract.getCapsule(id);
+            setCapsule(data);
+        } catch (err) {
+            alert("Capsule introuvable");
+        }
+    }
+
+    // Réclamer une capsule
+    async function claimCapsule(id) {
+        if (!contract) return;
+        try {
+            const tx = await contract.claimCapsule(id);
+            await tx.wait();
+            alert("Capsule réclamée !");
+        } catch (err) {
+            alert("Erreur : " + err.message);
+        }
+    }
+
+    useEffect(() => {
+        if (window.ethereum && walletConnected === false) {
+            connectWallet();
+        }
+    }, []);
 
     useEffect(() => {
         const fetchCapsule = async () => {
