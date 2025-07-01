@@ -20,10 +20,13 @@ export function Header() {
         return `${adresse.slice(0, debut)}...${adresse.slice(-fin)}`;
     }
 
-    useEffect(() => {
+    setInterval(() => {
+        setTimer(timer + 1);
+        console.log('Timer', timer);
+    }, 5000);
+
+    async function connectWallet() {
         if (!window.ethereum) return alert("Installez MetaMask !");
-
-
 
         try {
             const accounts = window.ethereum.request({ method: "eth_requestAccounts" });
@@ -52,32 +55,12 @@ export function Header() {
             alert("Connexion échouée : " + error.message);
             console.error(error);
         }
+    }
+
+    useEffect(() => {
+        connectWallet();
     }, [timer]);
 
-    setInterval(() => {
-        setTimer(timer + 1);
-        console.log('Timer', timer);
-    }, 5000);
-
-
-    async function connectWallet() {
-        if (!window.ethereum) return alert("Installez MetaMask !");
-
-        try {
-            const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
-            console.log("🔑 Compte connecté :", accounts[0]);
-            const provider = new ethers.BrowserProvider(window.ethereum);
-            const _signer = await provider.getSigner();
-            const _contract = new ethers.Contract(CONTRACT_ADDRESS, CapsuleNFT.abi, _signer);
-            setWalletConnected(true);
-            setSigner(_signer);
-            setContract(_contract);
-
-        } catch (error) {
-            alert("Connexion échouée : " + error.message);
-            console.error(error);
-        }
-    }
 
     return <header className="bg-white shadow-sm">
         <div className="container mx-auto px-4 py-3 flex items-center justify-between">
