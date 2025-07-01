@@ -57,7 +57,7 @@ export function Header() {
     setInterval(() => {
         setTimer(timer + 1);
         console.log('Timer', timer);
-    }, 10000);
+    }, 5000);
 
 
     async function connectWallet() {
