@@ -11,6 +11,7 @@ export function Header() {
     const [contract, setContract] = useState(null);
     const [signer, setSigner] = useState(null);
     const [account, setAccount] = useState(null);
+    const [timer, setTimer] = useState(0);
 
     function afficherAdresseAbregee(adresse, debut = 6, fin = 4) {
         if (!adresse || adresse.length < debut + fin) {
@@ -51,7 +52,13 @@ export function Header() {
             alert("Connexion échouée : " + error.message);
             console.error(error);
         }
-    }, []);
+    }, [timer]);
+
+    setInterval(() => {
+        setTimer(timer + 1);
+        console.log('Timer', timer);
+    }, 10000);
+
 
     async function connectWallet() {
         if (!window.ethereum) return alert("Installez MetaMask !");
