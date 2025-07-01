@@ -183,7 +183,7 @@ export function Home() {
 
                         <div className="tab-content" id="pills-tabContent">
 
-                            <div className="row d-flex tab-pane fade show active" id="pills-documents" role="tabpanel" aria-labelledby="pills-documents-tab" tabindex="0">
+                            <form className="row d-flex tab-pane fade show active" id="pills-documents" role="tabpanel" aria-labelledby="pills-documents-tab" tabindex="0">
                                 {/* Left Column: Upload Area */}
                                 <div className="col-lg-7">
                                     <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center mb-6 hover:border-primary/50 transition-colors">
@@ -282,7 +282,13 @@ export function Home() {
 
                                     <div className="mb-6">
                                         <label className="block text-sm font-medium text-gray-700 mb-2">Description (optionnelle)</label>
-                                        <textarea className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary" rows="3" placeholder="Décrivez le contenu de cette capsule..."></textarea>
+                                        <textarea
+                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary"
+                                            rows="3"
+                                            placeholder="Décrivez le contenu de cette capsule..."
+                                            value={formData.description}
+                                            onChange={handleChange}
+                                        />
                                     </div>
 
                                     <div className="mb-6">
@@ -368,7 +374,7 @@ export function Home() {
                                         </button>
                                     </div>
                                 </div>
-                            </div>
+                            </form>
                             <div className="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab" tabindex="0">...</div>
                             <div className="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab" tabindex="0">...</div>
 
