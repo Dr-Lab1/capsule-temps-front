@@ -4,9 +4,9 @@ import { useEffect, useState } from 'react';
 import { ethers } from "ethers";
 import CapsuleNFT from "../abi/CapsuleNFT.json";
 
-const CONTRACT_ADDRESS = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"; // 🔁 remplace par l’adresse de ton contrat
+const CONTRACT_ADDRESS = "0x5FbDB2315678afecb367f032d93F642f64180aa3"; // 🔁 remplace par l’adresse de ton contrat
 
-export default function Home() {
+export function Home() {
 
     const [capsule, setCapsule] = useState(null);
     const [walletConnected, setWalletConnected] = useState(false);
@@ -166,21 +166,21 @@ export default function Home() {
 
                         {/* Tabs */}
                         <div className="flex mb-8 bg-gray-100 p-1 rounded-full inline-block align-items-center">
-                            <ul class="nav nav-pills m-2" id="pills-tab" role="tablist">
-                                <li class="nav-item" role="presentation">
-                                    <button class="tab-button active px-4 py-2 rounded-full whitespace-nowrap text-sm font-medium text-gray-700 nav-link" id="pills-documents-tab" data-bs-toggle="pill" data-bs-target="#pills-documents" type="button" role="tab" aria-controls="pills-documents" aria-selected="true">Documents</button>
+                            <ul className="nav nav-pills m-2" id="pills-tab" role="tablist">
+                                <li className="nav-item" role="presentation">
+                                    <button className="tab-button active px-4 py-2 rounded-full whitespace-nowrap text-sm font-medium text-gray-700 nav-link" id="pills-documents-tab" data-bs-toggle="pill" data-bs-target="#pills-documents" type="button" role="tab" aria-controls="pills-documents" aria-selected="true">Documents</button>
                                 </li>
-                                <li class="nav-item" role="presentation">
-                                    <button class="tab-button px-4 py-2 rounded-full whitespace-nowrap text-sm font-medium text-gray-700 nav-link" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">Cryptos</button>
+                                <li className="nav-item" role="presentation">
+                                    <button className="tab-button px-4 py-2 rounded-full whitespace-nowrap text-sm font-medium text-gray-700 nav-link" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">Cryptos</button>
                                 </li>
-                                <li class="nav-item" role="presentation">
-                                    <button class="tab-button px-4 py-2 rounded-full whitespace-nowrap text-sm font-medium text-gray-700 nav-link" id="pills-contact-tab" data-bs-toggle="pill" data-bs-target="#pills-contact" type="button" role="tab" aria-controls="pills-contact" aria-selected="false">Messages</button>
+                                <li className="nav-item" role="presentation">
+                                    <button className="tab-button px-4 py-2 rounded-full whitespace-nowrap text-sm font-medium text-gray-700 nav-link" id="pills-contact-tab" data-bs-toggle="pill" data-bs-target="#pills-contact" type="button" role="tab" aria-controls="pills-contact" aria-selected="false">Messages</button>
                                 </li>
                             </ul>
                         </div>
 
 
-                        <div class="tab-content" id="pills-tabContent">
+                        <div className="tab-content" id="pills-tabContent">
 
                             <div className="row d-flex tab-pane fade show active" id="pills-documents" role="tabpanel" aria-labelledby="pills-documents-tab" tabindex="0">
                                 {/* Left Column: Upload Area */}
@@ -344,14 +344,14 @@ export default function Home() {
                                             <span className="text-sm text-gray-600">Frais de gas estimés:</span>
                                             <span className="font-medium">~0.0042 ETH</span>
                                         </div>
-                                        <button className="w-full bg-primary hover:bg-primary/90 text-white py-3 rounded-button whitespace-nowrap font-medium">
+                                        <button onClick={mintCapsule} className="w-full bg-primary hover:bg-primary/90 text-white py-3 rounded-button whitespace-nowrap font-medium">
                                             Créer ma capsule temporelle
                                         </button>
                                     </div>
                                 </div>
                             </div>
-                            <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab" tabindex="0">...</div>
-                            <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab" tabindex="0">...</div>
+                            <div className="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab" tabindex="0">...</div>
+                            <div className="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab" tabindex="0">...</div>
 
                         </div>
 
@@ -373,17 +373,17 @@ export default function Home() {
                             </div>
                         </div>
                         <div className="relative">
-                            <div class="dropdown">
-                                <button class="flex items-center px-4 py-2 border border-gray-300 rounded-lg text-gray-700" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <div className="dropdown">
+                                <button className="flex items-center px-4 py-2 border border-gray-300 rounded-lg text-gray-700" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     <span>Trier par</span>
                                     <div className="w-4 h-4 flex items-center justify-center ml-2">
                                         <i className="ri-arrow-down-s-line"></i>
                                     </div>
                                 </button>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="#">Action</a></li>
-                                    <li><a class="dropdown-item" href="#">Another action</a></li>
-                                    <li><a class="dropdown-item" href="#">Something else here</a></li>
+                                <ul className="dropdown-menu">
+                                    <li><a className="dropdown-item" href="#">Action</a></li>
+                                    <li><a className="dropdown-item" href="#">Another action</a></li>
+                                    <li><a className="dropdown-item" href="#">Something else here</a></li>
                                 </ul>
                             </div>
                         </div>
