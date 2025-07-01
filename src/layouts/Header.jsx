@@ -23,7 +23,7 @@ export function Header() {
     setInterval(() => {
         setTimer(timer + 1);
         console.log('Timer', timer);
-    }, 5000);
+    }, 10000);
 
     async function connectWallet() {
         if (!window.ethereum) return alert("Installez MetaMask !");

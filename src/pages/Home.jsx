@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { ethers } from "ethers";
 import CapsuleNFT from "../abi/CapsuleNFT.json";
 
-const CONTRACT_ADDRESS = "0x5FbDB2315678afecb367f032d93F642f64180aa3"; // 🔁 remplace par l’adresse de ton contrat
+const CONTRACT_ADDRESS = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
 
 export function Home() {
 
@@ -12,9 +12,32 @@ export function Home() {
     const [walletConnected, setWalletConnected] = useState(false);
     const [contract, setContract] = useState(null);
     const [signer, setSigner] = useState(null);
-    const [formData, setFormData] = useState({ heir: "", date: "", uri: "" });
 
-    // Connexion au wallet
+    const [formData, setFormData] = useState({
+        capsuleName: "",
+        heir: "",
+        description: "",
+        date: "",
+        // ajoute ce qu’il te faut
+    });
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
+
+
+    const [heir, setHeir] = useState("");
+    const [capsuleName, setCapsuleName] = useState("");
+
+    const handleHeir = (e) => {
+        setHeir(e.target.value)
+        console.log('HEIR', heir);
+    }
+
     async function connectWallet() {
         if (!window.ethereum) return alert("Installez MetaMask !");
         const provider = new ethers.BrowserProvider(window.ethereum);
@@ -25,7 +48,6 @@ export function Home() {
         setContract(_contract);
     }
 
-    // Création d'une capsule
     async function mintCapsule() {
         if (!contract) return;
         const { heir, date, uri } = formData;
@@ -38,7 +60,6 @@ export function Home() {
         alert("Capsule créée !");
     }
 
-    // Récupérer une capsule
     async function getCapsule(id) {
         if (!contract) return;
         try {
@@ -49,7 +70,6 @@ export function Home() {
         }
     }
 
-    // Réclamer une capsule
     async function claimCapsule(id) {
         if (!contract) return;
         try {
@@ -65,25 +85,6 @@ export function Home() {
         if (window.ethereum && walletConnected === false) {
             connectWallet();
         }
-    }, []);
-
-    useEffect(() => {
-        const fetchCapsule = async () => {
-            if (!window.ethereum) return;
-
-            const provider = new ethers.BrowserProvider(window.ethereum);
-            const signer = await provider.getSigner();
-            const contract = new ethers.Contract(CONTRACT_ADDRESS, CapsuleNFT.abi, signer);
-
-            try {
-                const data = await contract.getCapsule(0); // tokenId = 0
-                setCapsule(data);
-            } catch (error) {
-                console.error("Erreur de lecture de la capsule :", error);
-            }
-        };
-
-        fetchCapsule();
     }, []);
 
     return <main>
@@ -191,9 +192,15 @@ export function Home() {
                                         </div>
                                         <h3 className="text-lg font-medium mb-2">Glissez-déposez vos fichiers ici</h3>
                                         <p className="text-gray-500 text-sm mb-4">Formats supportés: PDF, JPG, PNG, MP4 (Max. 100MB)</p>
-                                        <button className="bg-primary text-white px-4 py-2 rounded-button whitespace-nowrap">
-                                            Parcourir les fichiers
-                                        </button>
+                                        {/* <input type="file" className="bg-primary text-white px-4 py-2 rounded-button whitespace-nowrap" /> */}
+                                        <input
+                                            className="form-control px-4 py-2 rounded-button whitespace-nowrap"
+                                            required type="file"
+                                            accept="image/*"
+                                            id="formFile"
+                                            name="image"
+                                        />
+
                                     </div>
 
                                     <div className="mb-6">
@@ -264,7 +271,13 @@ export function Home() {
                                 <div className="col-lg-5">
                                     <div className="mb-6">
                                         <label className="block text-sm font-medium text-gray-700 mb-2">Nom de la capsule</label>
-                                        <input type="text" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary" placeholder="Ex: Testament familial" />
+                                        <input type="text"
+                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary"
+                                            placeholder="Ex: Testament familial"
+                                            name="capsuleName"
+                                            value={formData.capsuleName}
+                                            onChange={handleChange}
+                                        />
                                     </div>
 
                                     <div className="mb-6">
@@ -275,7 +288,13 @@ export function Home() {
                                     <div className="mb-6">
                                         <label className="block text-sm font-medium text-gray-700 mb-2">Bénéficiaires</label>
                                         <div className="flex items-center mb-3">
-                                            <input type="text" className="flex-1 px-4 py-2 border border-gray-300 rounded-l-lg focus:ring-2 focus:ring-primary/50 focus:border-primary" placeholder="Adresse Ethereum ou ENS" />
+                                            <input
+                                                className="flex-1 px-4 py-2 border border-gray-300 rounded-l-lg"
+                                                placeholder="Adresse Ethereum ou ENS"
+                                                name="heir"
+                                                value={formData.heir}
+                                                onChange={handleChange}
+                                            />
                                             <button className="bg-primary text-white px-4 py-2 rounded-r-lg whitespace-nowrap">
                                                 Ajouter
                                             </button>
@@ -307,7 +326,7 @@ export function Home() {
                                             </div>
 
                                             <div className="flex items-center">
-                                                <input type="checkbox" id="inactivity-condition" className="custom-checkbox mr-2" checked />
+                                                <input type="checkbox" id="inactivity-condition" className="custom-checkbox mr-2" />
                                                 <label for="inactivity-condition" className="text-sm">Période d'inactivité</label>
                                             </div>
                                             <div className="pl-8">
