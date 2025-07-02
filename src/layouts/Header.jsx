@@ -1,17 +1,4 @@
-import { useEffect, useState } from "react";
-
-import { ethers } from "ethers";
-import CapsuleNFT from "../abi/CapsuleNFT.json";
-
-const CONTRACT_ADDRESS = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
-
-export function Header() {
-
-    const [walletConnected, setWalletConnected] = useState(false);
-    const [contract, setContract] = useState(null);
-    const [signer, setSigner] = useState(null);
-    const [account, setAccount] = useState(null);
-    const [timer, setTimer] = useState(0);
+export function Header({ walletConnected, account, connectWallet }) {
 
     function afficherAdresseAbregee(adresse, debut = 6, fin = 4) {
         if (!adresse || adresse.length < debut + fin) {
@@ -19,48 +6,6 @@ export function Header() {
         }
         return `${adresse.slice(0, debut)}...${adresse.slice(-fin)}`;
     }
-
-    setInterval(() => {
-        setTimer(timer + 1);
-        console.log('Timer', timer);
-    }, 10000);
-
-    async function connectWallet() {
-        if (!window.ethereum) return alert("Installez MetaMask !");
-
-        try {
-            const accounts = window.ethereum.request({ method: "eth_requestAccounts" });
-            console.log("🔑 Compte connecté :", accounts[0]);
-            const provider = new ethers.BrowserProvider(window.ethereum);
-            const _signer = provider.getSigner();
-            const _contract = new ethers.Contract(CONTRACT_ADDRESS, CapsuleNFT.abi, _signer);
-            setWalletConnected(true);
-            setSigner(_signer);
-            setContract(_contract);
-
-            if (window.ethereum) {
-                window.ethereum.request({ method: "eth_accounts" }).then((accounts) => {
-                    if (accounts.length > 0) {
-                        console.log("✅ MetaMask détecté. Compte :", accounts[0]);
-                        setAccount(accounts[0]);
-                    } else {
-                        console.log("⚠️ MetaMask ouvert mais non connecté.");
-                    }
-                });
-            } else {
-                console.log("❌ MetaMask non trouvé.");
-            }
-
-        } catch (error) {
-            alert("Connexion échouée : " + error.message);
-            console.error(error);
-        }
-    }
-
-    useEffect(() => {
-        connectWallet();
-    }, [timer]);
-
 
     return <header className="bg-white shadow-sm">
         <div className="container mx-auto px-4 py-3 flex items-center justify-between">
