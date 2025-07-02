@@ -9,6 +9,8 @@ contract CapsuleNFT is ERC721, Ownable {
     uint256 public nextTokenId;
 
     struct Capsule {
+        string name;
+        string description;
         string uri;
         uint256 unlockDate;
         address heir;
@@ -19,14 +21,29 @@ contract CapsuleNFT is ERC721, Ownable {
     mapping(uint256 => Capsule) public capsules;
     uint256[] private allTokenIds;
 
-    event CapsuleMinted(uint256 indexed tokenId, address indexed creator, address indexed heir, uint256 unlockDate, string uri, uint256 value);
-    event CapsuleClaimed(uint256 indexed tokenId, address indexed heir, uint256 value);
+    event CapsuleMinted(
+        uint256 indexed tokenId,
+        address indexed creator,
+        address indexed heir,
+        uint256 unlockDate,
+        string name,
+        string description,
+        string uri,
+        uint256 value
+    );
+    event CapsuleClaimed(
+        uint256 indexed tokenId,
+        address indexed heir,
+        uint256 value
+    );
 
     constructor() ERC721("CapsuleNFT", "CNFT") {}
 
     function mintCapsule(
         address heir,
         uint256 unlockDate,
+        string memory name,
+        string memory description,
         string memory uri
     ) external payable {
         require(unlockDate > block.timestamp, "Unlock date must be in future");
@@ -35,6 +52,8 @@ contract CapsuleNFT is ERC721, Ownable {
         _safeMint(msg.sender, tokenId);
 
         capsules[tokenId] = Capsule({
+            name: name,
+            description: description,
             uri: uri,
             unlockDate: unlockDate,
             heir: heir,
@@ -43,7 +62,16 @@ contract CapsuleNFT is ERC721, Ownable {
         });
 
         allTokenIds.push(tokenId);
-        emit CapsuleMinted(tokenId, msg.sender, heir, unlockDate, uri, msg.value);
+        emit CapsuleMinted(
+            tokenId,
+            msg.sender,
+            heir,
+            unlockDate,
+            name,
+            description,
+            uri,
+            msg.value
+        );
     }
 
     function claimCapsule(uint256 tokenId) external {
@@ -68,25 +96,36 @@ contract CapsuleNFT is ERC721, Ownable {
 
     function addFundsToCapsule(uint256 tokenId) external payable {
         require(_exists(tokenId), "Invalid token");
-        require(ownerOf(tokenId) == msg.sender, "Only capsule owner can fund it");
+        require(
+            ownerOf(tokenId) == msg.sender,
+            "Only capsule owner can fund it"
+        );
         require(!capsules[tokenId].claimed, "Capsule already claimed");
 
         capsules[tokenId].balance += msg.value;
     }
 
-    function getCapsule(uint256 tokenId) external view returns (
-        string memory uri,
-        uint256 unlockDate,
-        address heir,
-        bool claimed,
-        uint256 balance
-    ) {
+    function getCapsule(
+        uint256 tokenId
+    )
+        external
+        view
+        returns (
+            string memory uri,
+            uint256 unlockDate,
+            address heir,
+            bool claimed,
+            uint256 balance
+        )
+    {
         require(_exists(tokenId), "Capsule does not exist");
         Capsule memory c = capsules[tokenId];
         return (c.uri, c.unlockDate, c.heir, c.claimed, c.balance);
     }
 
-    function getCapsuleBalance(uint256 tokenId) external view returns (uint256) {
+    function getCapsuleBalance(
+        uint256 tokenId
+    ) external view returns (uint256) {
         require(_exists(tokenId), "Capsule does not exist");
         return capsules[tokenId].balance;
     }
@@ -95,14 +134,19 @@ contract CapsuleNFT is ERC721, Ownable {
         return allTokenIds;
     }
 
-    function tokenURI(uint256 tokenId) public view override returns (string memory) {
+    function tokenURI(
+        uint256 tokenId
+    ) public view override returns (string memory) {
         require(_exists(tokenId), "Token does not exist");
         return capsules[tokenId].uri;
     }
 
     function updateHeir(uint256 tokenId, address newHeir) external {
         require(ownerOf(tokenId) == msg.sender, "Not token owner");
-        require(block.timestamp < capsules[tokenId].unlockDate, "Capsule already unlocked");
+        require(
+            block.timestamp < capsules[tokenId].unlockDate,
+            "Capsule already unlocked"
+        );
         capsules[tokenId].heir = newHeir;
     }
 

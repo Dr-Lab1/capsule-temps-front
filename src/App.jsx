@@ -11,6 +11,9 @@ const CONTRACT_ADDRESS = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
 
 import FAQ from "./layouts/Faq";
 
+import Swal from 'sweetalert2';
+import axios from 'axios';
+
 
 function App() {
 
@@ -22,17 +25,12 @@ function App() {
   const [timer, setTimer] = useState(0);
 
   const [files, setFiles] = useState([]);
-  const [unlockDate, setUnlockDate] = useState("");
-  const [tokenId, setTokenId] = useState("");
 
   const [formData, setFormData] = useState({
     capsuleName: "",
     heir: "",
     description: "",
-    date: "",
-    // files: [],
     unlockDate: "",
-    tokenId: ""
   });
 
   const handleChange = (e) => {
@@ -109,19 +107,43 @@ function App() {
   async function mintCapsule() {
     if (!contract) return;
 
+    if (!formData.heir || !formData.unlockDate || !formData.capsuleName || !formData.description) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Champ invalide',
+        text: 'Veuillez remplir tous les champs !',
+      });
+
+      return;
+    }
+
     try {
+
+      const { heir, unlockDate, capsuleName, description } = formData;
+      const date = Math.floor(new Date(unlockDate).getTime() / 1000);
+
+      if (!date || isNaN(date)) {
+        alert("Date de libération invalide", date);
+        return;
+      }
+
       const uri = await uploadToIPFS();
 
-      const { heir, date } = formData;
-      const unlockDate = Math.floor(new Date(date).getTime() / 1000);
-
-      const tx = await contract.mintCapsule(heir, unlockDate, uri, {
-        value: ethers.parseEther("0.01"),
-      });
+      const tx = await contract.mintCapsule(
+        heir,
+        date,
+        capsuleName,
+        description,
+        uri,
+      );
       await tx.wait();
       alert("Capsule créée !");
     } catch (error) {
-      alert("Erreur : " + error.message);
+      Swal.fire({
+        icon: 'error',
+        title: 'Champ invalide',
+        text: error.message,
+      });
     }
 
   }
@@ -261,7 +283,8 @@ function App() {
                       {/* <input type="file" className="bg-primary text-white px-4 py-2 rounded-button whitespace-nowrap" /> */}
                       <input
                         className="form-control px-4 py-2 rounded-button whitespace-nowrap"
-                        required type="file"
+                        // required
+                        type="file"
                         // accept="image/*"
                         id="formFile"
                         name="image"
@@ -394,7 +417,13 @@ function App() {
                           <label for="date-condition" className="text-sm">Date spécifique</label>
                         </div>
                         <div className="pl-8">
-                          <input type="date" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary" />
+                          <input
+                            type="date"
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary"
+                            name='unlockDate'
+                            value={formData.unlockDate}
+                            onChange={handleChange}
+                          />
                         </div>
 
                         <div className="flex items-center">
@@ -411,22 +440,10 @@ function App() {
                             <span>36 mois</span>
                           </div>
                         </div>
-
-                        <div className="flex items-center">
-                          <input type="checkbox" id="oracle-condition" className="custom-checkbox mr-2" />
-                          <label for="oracle-condition" className="text-sm">Événement externe (Oracle)</label>
-                        </div>
                       </div>
                     </div>
 
-                    <div className="mb-6">
-                      <div className="flex items-center justify-between mb-2">
-                        <label className="block text-sm font-medium text-gray-700">Cryptage avancé</label>
-                        <label className="custom-switch">
-                          <input type="checkbox" checked />
-                          <span className="slider"></span>
-                        </label>
-                      </div>
+                    <div className="mb-6 border-t border-gray-200 pt-6">
                       <p className="text-xs text-gray-500">Le contenu sera crypté et ne pourra être déchiffré que par les bénéficiaires désignés.</p>
                     </div>
 
@@ -435,7 +452,11 @@ function App() {
                         <span className="text-sm text-gray-600">Frais de gas estimés:</span>
                         <span className="font-medium">~0.0042 ETH</span>
                       </div>
-                      <button onClick={mintCapsule} className="w-full bg-primary hover:bg-primary/90 text-white py-3 rounded-button whitespace-nowrap font-medium">
+                      <button
+                        type='button'
+                        onClick={mintCapsule}
+                        className="w-full bg-primary hover:bg-primary/90 text-white py-3 rounded-button whitespace-nowrap font-medium"
+                      >
                         Créer ma capsule temporelle
                       </button>
                     </div>
