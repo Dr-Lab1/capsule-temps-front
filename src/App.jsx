@@ -21,7 +21,27 @@ function App() {
   const [account, setAccount] = useState(null);
   const [timer, setTimer] = useState(0);
 
+  const [files, setFiles] = useState([]);
+  const [unlockDate, setUnlockDate] = useState("");
+  const [tokenId, setTokenId] = useState("");
 
+  const [formData, setFormData] = useState({
+    capsuleName: "",
+    heir: "",
+    description: "",
+    date: "",
+    // files: [],
+    unlockDate: "",
+    tokenId: ""
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
 
   setInterval(() => {
     setTimer(timer + 1);
@@ -60,41 +80,50 @@ function App() {
     }
   }
 
-  const [formData, setFormData] = useState({
-    capsuleName: "",
-    heir: "",
-    description: "",
-    date: "",
-    // ajoute ce qu’il te faut
-  });
+  const uploadToIPFS = async () => {
+    if (!files.length) return null;
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    const formData = new FormData();
+    for (let file of files) {
+      formData.append("file", file);
+    }
+
+    const res = await axios.post("https://api.pinata.cloud/pinning/pinFileToIPFS", formData, {
+      maxBodyLength: "Infinity",
+      headers: {
+        "Content-Type": `multipart/form-data; boundary=${formData._boundary}`,
+        pinata_api_key: "adec57c97b7db3569823",
+        pinata_secret_api_key: "dea0875c91969eff91dc768667fa7424485996a997816455a98bf03306069601",
+      },
+    });
+
+    return `ipfs://${res.data.IpfsHash}`;
   };
 
-
-  const [heir, setHeir] = useState("");
-  const [capsuleName, setCapsuleName] = useState("");
-
-  const handleHeir = (e) => {
-    setHeir(e.target.value)
-    console.log('HEIR', heir);
-  }
+  const removeFile = (index) => {
+    const updatedFiles = [...files];
+    updatedFiles.splice(index, 1);
+    setFiles(updatedFiles);
+  };
 
   async function mintCapsule() {
     if (!contract) return;
-    const { heir, date, uri } = formData;
-    const unlockDate = Math.floor(new Date(date).getTime() / 1000);
 
-    const tx = await contract.mintCapsule(heir, unlockDate, uri, {
-      value: ethers.parseEther("0.01"),
-    });
-    await tx.wait();
-    alert("Capsule créée !");
+    try {
+      const uri = await uploadToIPFS();
+
+      const { heir, date } = formData;
+      const unlockDate = Math.floor(new Date(date).getTime() / 1000);
+
+      const tx = await contract.mintCapsule(heir, unlockDate, uri, {
+        value: ethers.parseEther("0.01"),
+      });
+      await tx.wait();
+      alert("Capsule créée !");
+    } catch (error) {
+      alert("Erreur : " + error.message);
+    }
+
   }
 
   async function getCapsule(id) {
@@ -233,47 +262,46 @@ function App() {
                       <input
                         className="form-control px-4 py-2 rounded-button whitespace-nowrap"
                         required type="file"
-                        accept="image/*"
+                        // accept="image/*"
                         id="formFile"
                         name="image"
+                        multiple
+                        onChange={(e) => setFiles([...e.target.files])}
                       />
 
                     </div>
 
-                    <div className="mb-6">
-                      <h3 className="text-lg font-medium mb-3">Fichiers sélectionnés</h3>
-                      <div className="space-y-3">
-                        <div className="flex items-center justify-between bg-gray-50 p-3 rounded-lg">
-                          <div className="flex items-center">
-                            <div className="w-10 h-10 flex items-center justify-center bg-blue-100 rounded-lg mr-3">
-                              <i className="ri-file-text-line ri-lg text-blue-600"></i>
-                            </div>
-                            <div>
-                              <p className="font-medium">titre_foncier_kinshasa.pdf</p>
-                              <p className="text-xs text-gray-500">2.4 MB</p>
-                            </div>
-                          </div>
-                          <button className="text-gray-500 hover:text-red-500">
-                            <i className="ri-delete-bin-line"></i>
-                          </button>
-                        </div>
 
-                        <div className="flex items-center justify-between bg-gray-50 p-3 rounded-lg">
-                          <div className="flex items-center">
-                            <div className="w-10 h-10 flex items-center justify-center bg-green-100 rounded-lg mr-3">
-                              <i className="ri-image-line ri-lg text-green-600"></i>
-                            </div>
-                            <div>
-                              <p className="font-medium">photo_famille_2024.jpg</p>
-                              <p className="text-xs text-gray-500">3.8 MB</p>
-                            </div>
+                    {files.length > 0 && (
+                      <div className="mb-6">
+                        <h3 className="text-lg font-medium mb-3">Fichiers sélectionnés</h3>
+                        <div className="space-y-3">
+                          <div className="space-y-3">
+                            {files.map((file, idx) => (
+                              <div className="flex items-center justify-between bg-gray-50 p-3 rounded-lg">
+                                <div className="flex items-center">
+                                  <div className="w-10 h-10 flex items-center justify-center bg-blue-100 rounded-lg mr-3">
+                                    <i className="ri-file-text-line ri-lg text-blue-600"></i>
+                                  </div>
+                                  <div>
+                                    <p className="font-medium">{file.name}</p>
+                                    <p className="text-xs text-gray-500">{file.type || 'N/A'}</p>
+                                    <p className="text-xs text-gray-500">{(file.size / (1024 * 1000)).toFixed(2)} MB</p>
+                                  </div>
+                                </div>
+                                <button
+                                  type="button"
+                                  onClick={() => removeFile(idx)}
+                                  className="text-gray-500 hover:text-red-500"
+                                >
+                                  <i className="ri-delete-bin-line"></i>
+                                </button>
+                              </div>
+                            ))}
                           </div>
-                          <button className="text-gray-500 hover:text-red-500">
-                            <i className="ri-delete-bin-line"></i>
-                          </button>
                         </div>
                       </div>
-                    </div>
+                    )}
 
                     <div>
                       <h3 className="text-lg font-medium mb-3">Type de NFT</h3>
