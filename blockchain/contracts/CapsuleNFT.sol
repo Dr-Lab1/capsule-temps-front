@@ -111,6 +111,8 @@ contract CapsuleNFT is ERC721, Ownable {
         external
         view
         returns (
+            string memory name,
+            string memory description,
             string memory uri,
             uint256 unlockDate,
             address heir,
@@ -120,7 +122,7 @@ contract CapsuleNFT is ERC721, Ownable {
     {
         require(_exists(tokenId), "Capsule does not exist");
         Capsule memory c = capsules[tokenId];
-        return (c.uri, c.unlockDate, c.heir, c.claimed, c.balance);
+        return (c.name, c.description, c.uri, c.unlockDate, c.heir, c.claimed, c.balance);
     }
 
     function getCapsuleBalance(
