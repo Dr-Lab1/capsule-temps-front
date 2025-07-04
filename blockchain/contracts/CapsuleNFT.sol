@@ -16,6 +16,9 @@ contract CapsuleNFT is ERC721, Ownable {
         address heir;
         bool claimed;
         uint256 balance; // ETH associé à la capsule
+        uint256 createdAt;
+        uint256 updatedAt;
+        uint256 deletedAt;
     }
 
     mapping(uint256 => Capsule) public capsules;
@@ -58,7 +61,10 @@ contract CapsuleNFT is ERC721, Ownable {
             unlockDate: unlockDate,
             heir: heir,
             claimed: false,
-            balance: msg.value
+            balance: msg.value,
+            createdAt: block.timestamp,
+            updatedAt: block.timestamp,
+            deletedAt: 0
         });
 
         allTokenIds.push(tokenId);
@@ -117,12 +123,26 @@ contract CapsuleNFT is ERC721, Ownable {
             uint256 unlockDate,
             address heir,
             bool claimed,
-            uint256 balance
+            uint256 balance,
+            uint256 createdAt,
+            uint256 updatedAt,
+            uint256 deletedAt
         )
     {
         require(_exists(tokenId), "Capsule does not exist");
         Capsule memory c = capsules[tokenId];
-        return (c.name, c.description, c.uri, c.unlockDate, c.heir, c.claimed, c.balance);
+        return (
+            c.name,
+            c.description,
+            c.uri,
+            c.unlockDate,
+            c.heir,
+            c.claimed,
+            c.balance,
+            c.createdAt,
+            c.updatedAt,
+            c.deletedAt
+        );
     }
 
     function getCapsuleBalance(
@@ -150,6 +170,13 @@ contract CapsuleNFT is ERC721, Ownable {
             "Capsule already unlocked"
         );
         capsules[tokenId].heir = newHeir;
+        capsules[tokenId].updatedAt = block.timestamp;
+    }
+
+    function deleteCapsule(uint256 tokenId) external {
+        require(ownerOf(tokenId) == msg.sender, "Not token owner");
+        capsules[tokenId].deletedAt = block.timestamp;
+        capsules[tokenId].updatedAt = block.timestamp;
     }
 
     receive() external payable {

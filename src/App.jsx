@@ -7,7 +7,7 @@ import { Footer } from './layouts/Footer'
 import { ethers } from "ethers";
 import CapsuleNFT from "./abi/CapsuleNFT.json";
 
-const CONTRACT_ADDRESS = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
+const CONTRACT_ADDRESS = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
 
 import FAQ from "./layouts/Faq";
 
@@ -41,6 +41,13 @@ function App() {
       [name]: value,
     }));
   };
+
+  function afficherAdresseAbregee(adresse, debut = 6, fin = 4) {
+    if (!adresse || adresse.length < debut + fin) {
+      return adresse;
+    }
+    return `${adresse.slice(0, debut)}...${adresse.slice(-fin)}`;
+  }
 
   setInterval(() => {
     setTimer(timer + 1);
@@ -124,7 +131,12 @@ function App() {
       const date = Math.floor(new Date(unlockDate).getTime() / 1000);
 
       if (!date || isNaN(date)) {
-        alert("Date de libération invalide", date);
+        Swal.fire({
+          icon: 'warning',
+          title: 'Champ invalide',
+          text: 'Date de libération invalide',
+        });
+
         return;
       }
 
@@ -138,7 +150,13 @@ function App() {
         uri,
       );
       await tx.wait();
-      alert("Capsule créée !");
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Création de la capsule réussie',
+        text: 'Votre Capsule a été créée avec succès !',
+      });
+
     } catch (error) {
       Swal.fire({
         icon: 'error',
@@ -156,13 +174,15 @@ function App() {
       const result = await Promise.all(
         ids.map(async (id) => {
           const raw = await contract.getCapsule(id);
+
           return {
             id: id.toString(),
-            uri: raw[0],
-            unlockDate: Number(raw[1]),
-            heir: raw[2],
-            claimed: raw[3],
-            balance: Number(raw[4]),
+            name: raw[0],
+            description: raw[1],
+            uri: raw[2],
+            unlockDate: raw[3],
+            heir: raw[4],
+            claimed: raw[5],
           };
         })
       );
@@ -523,47 +543,50 @@ function App() {
             {/* Capsule 1 */}
 
             {allCapsules.map((cap) => (
-              <>
-                <li key={cap.id}>
-                  Capsule #{cap.id} → Heir: {cap.heir}, Unlock: {new Date(Number(cap.unlockDate) * 1000).toLocaleString()}
-                </li>
-
-                <div className="capsule-card bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300">
-                  <div className="h-40 bg-gradient-to-r from-blue-500 to-indigo-600 relative">
-                    <div className="absolute top-3 right-3 bg-white/90 text-xs font-medium px-2 py-1 rounded-full">
-                      Verrouillée
-                    </div>
-                  </div>
-                  <div className="p-5">
-                    <h3 className="font-semibold text-lg mb-2">Testament Familial</h3>
-                    <div className="flex items-center text-sm text-gray-500 mb-3">
-                      <div className="w-4 h-4 flex items-center justify-center mr-1">
-                        <i className="ri-time-line"></i>
-                      </div>
-                      <span>Créée le 12 juin 2025</span>
-                    </div>
-                    <div className="flex items-center text-sm text-gray-500 mb-4">
-                      <div className="w-4 h-4 flex items-center justify-center mr-1">
-                        <i className="ri-lock-line"></i>
-                      </div>
-                      <span>Déverrouillage: Inactivité (6 mois)</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <div className="flex -space-x-2">
-                        <div className="w-8 h-8 rounded-full bg-gray-200 border-2 border-white flex items-center justify-center text-xs">
-                          <i className="ri-user-line"></i>
-                        </div>
-                        <div className="w-8 h-8 rounded-full bg-gray-200 border-2 border-white flex items-center justify-center text-xs">
-                          <i className="ri-user-line"></i>
-                        </div>
-                      </div>
-                      <button className="text-primary hover:text-primary/80">
-                        Gérer
-                      </button>
-                    </div>
+              <div className="capsule-card bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300">
+                <div className="h-40 bg-gradient-to-r from-blue-500 to-indigo-600 relative">
+                  <div className="absolute top-3 right-3 bg-white/90 text-xs font-medium px-2 py-1 rounded-full">
+                    { cap.claimed ? 'Déverrouillée' : 'Verrouillée' }
                   </div>
                 </div>
-              </>
+                <div className="p-5">
+                  <h3 className="font-semibold text-lg mb-2">{cap.name}</h3>
+                  <div className="flex items-center text-sm text-gray-500 mb-3">
+                    <span>{cap.description}</span>
+                  </div>
+                  <div className="flex items-center text-sm text-gray-500 mb-3">
+                    <div className="w-4 h-4 flex items-center justify-center mr-1">
+                      <i className="ri-time-line"></i>
+                    </div>
+                    <span>Créée le 12 juin 2025</span>
+                  </div>
+                  <div className="flex items-center text-sm text-gray-500 mb-3">
+                    <div className="w-4 h-4 flex items-center justify-center mr-1">
+                      <i className="ri-user-line"></i>
+                    </div>
+                    <span>{afficherAdresseAbregee(cap.heir, 6, 7)}</span>
+                  </div>
+                  <div className="flex items-center text-sm text-gray-500 mb-4">
+                    <div className="w-4 h-4 flex items-center justify-center mr-1">
+                      <i className="ri-lock-line"></i>
+                    </div>
+                    <span>Déverrouillage: Inactivité (6 mois)</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div className="flex -space-x-2">
+                      <div className="w-8 h-8 rounded-full bg-gray-200 border-2 border-white flex items-center justify-center text-xs">
+                        <i className="ri-user-line"></i>
+                      </div>
+                      <div className="w-8 h-8 rounded-full bg-gray-200 border-2 border-white flex items-center justify-center text-xs">
+                        <i className="ri-user-line"></i>
+                      </div>
+                    </div>
+                    <button className="text-primary hover:text-primary/80">
+                      Gérer
+                    </button>
+                  </div>
+                </div>
+              </div>
             ))}
 
 
