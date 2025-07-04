@@ -7,12 +7,13 @@ import { Footer } from './layouts/Footer'
 import { ethers } from "ethers";
 import CapsuleNFT from "./abi/CapsuleNFT.json";
 
-const CONTRACT_ADDRESS = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
+const CONTRACT_ADDRESS = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
 
 import FAQ from "./layouts/Faq";
 
 import Swal from 'sweetalert2';
 import axios from 'axios';
+import Countdown from './components/Countdown';
 
 
 function App() {
@@ -183,6 +184,9 @@ function App() {
             unlockDate: raw[3],
             heir: raw[4],
             claimed: raw[5],
+            createdAt: raw[8],
+            updatedAt: raw[7],
+            deletedAt: raw[6],
           };
         })
       );
@@ -213,6 +217,20 @@ function App() {
     } catch (err) {
       alert("Erreur : " + err.message);
     }
+  }
+
+  function formatTimestamp(timestampBigInt) {
+    const date = new Date(Number(timestampBigInt) * 1000); // convertir en millisecondes
+
+    const yyyy = date.getFullYear();
+    const mm = String(date.getMonth() + 1).padStart(2, "0");
+    const dd = String(date.getDate()).padStart(2, "0");
+
+    const hh = String(date.getHours()).padStart(2, "0");
+    const min = String(date.getMinutes()).padStart(2, "0");
+    const sec = String(date.getSeconds()).padStart(2, "0");
+
+    return `${dd}-${mm}-${yyyy} à ${hh}:${min}:${sec}`;
   }
 
   useEffect(() => {
@@ -546,7 +564,7 @@ function App() {
               <div className="capsule-card bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300">
                 <div className="h-40 bg-gradient-to-r from-blue-500 to-indigo-600 relative">
                   <div className="absolute top-3 right-3 bg-white/90 text-xs font-medium px-2 py-1 rounded-full">
-                    { cap.claimed ? 'Déverrouillée' : 'Verrouillée' }
+                    {cap.claimed ? 'Déverrouillée' : 'Verrouillée'}
                   </div>
                 </div>
                 <div className="p-5">
@@ -558,7 +576,7 @@ function App() {
                     <div className="w-4 h-4 flex items-center justify-center mr-1">
                       <i className="ri-time-line"></i>
                     </div>
-                    <span>Créée le 12 juin 2025</span>
+                    <span>Créée le { formatTimestamp(cap.createdAt) }</span>
                   </div>
                   <div className="flex items-center text-sm text-gray-500 mb-3">
                     <div className="w-4 h-4 flex items-center justify-center mr-1">
@@ -570,7 +588,9 @@ function App() {
                     <div className="w-4 h-4 flex items-center justify-center mr-1">
                       <i className="ri-lock-line"></i>
                     </div>
-                    <span>Déverrouillage: Inactivité (6 mois)</span>
+                    <span>
+                      <Countdown unlockDate={cap.unlockDate} />
+                    </span>
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="flex -space-x-2">
