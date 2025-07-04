@@ -558,8 +558,6 @@ function App() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-6">
-            {/* Capsule 1 */}
-
             {allCapsules.map((cap) => (
               <div className="capsule-card bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300">
                 <div className="h-40 bg-gradient-to-r from-blue-500 to-indigo-600 relative">
@@ -576,7 +574,7 @@ function App() {
                     <div className="w-4 h-4 flex items-center justify-center mr-1">
                       <i className="ri-time-line"></i>
                     </div>
-                    <span>Créée le { formatTimestamp(cap.createdAt) }</span>
+                    <span>Créée le {formatTimestamp(cap.createdAt)}</span>
                   </div>
                   <div className="flex items-center text-sm text-gray-500 mb-3">
                     <div className="w-4 h-4 flex items-center justify-center mr-1">
@@ -608,81 +606,6 @@ function App() {
                 </div>
               </div>
             ))}
-
-
-            {/* Capsule 2 */}
-            <div className="capsule-card bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300">
-              <div className="h-40 bg-gradient-to-r from-green-500 to-teal-600 relative">
-                <div className="absolute top-3 right-3 bg-white/90 text-xs font-medium px-2 py-1 rounded-full">
-                  Verrouillée
-                </div>
-              </div>
-              <div className="p-5">
-                <h3 className="font-semibold text-lg mb-2">Titres Fonciers Kinshasa</h3>
-                <div className="flex items-center text-sm text-gray-500 mb-3">
-                  <div className="w-4 h-4 flex items-center justify-center mr-1">
-                    <i className="ri-time-line"></i>
-                  </div>
-                  <span>Créée le 3 mai 2025</span>
-                </div>
-                <div className="flex items-center text-sm text-gray-500 mb-4">
-                  <div className="w-4 h-4 flex items-center justify-center mr-1">
-                    <i className="ri-calendar-line"></i>
-                  </div>
-                  <span>Déverrouillage: 15 janvier 2026</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex -space-x-2">
-                    <div className="w-8 h-8 rounded-full bg-gray-200 border-2 border-white flex items-center justify-center text-xs">
-                      <i className="ri-user-line"></i>
-                    </div>
-                  </div>
-                  <button className="text-primary hover:text-primary/80">
-                    Gérer
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Capsule 3 */}
-            <div className="capsule-card bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300">
-              <div className="h-40 bg-gradient-to-r from-purple-500 to-pink-600 relative">
-                <div className="absolute top-3 right-3 bg-white/90 text-xs font-medium px-2 py-1 rounded-full">
-                  Verrouillée
-                </div>
-              </div>
-              <div className="p-5">
-                <h3 className="font-semibold text-lg mb-2">Souvenirs Familiaux</h3>
-                <div className="flex items-center text-sm text-gray-500 mb-3">
-                  <div className="w-4 h-4 flex items-center justify-center mr-1">
-                    <i className="ri-time-line"></i>
-                  </div>
-                  <span>Créée le 20 avril 2025</span>
-                </div>
-                <div className="flex items-center text-sm text-gray-500 mb-4">
-                  <div className="w-4 h-4 flex items-center justify-center mr-1">
-                    <i className="ri-lock-line"></i>
-                  </div>
-                  <span>Déverrouillage: Inactivité (12 mois)</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex -space-x-2">
-                    <div className="w-8 h-8 rounded-full bg-gray-200 border-2 border-white flex items-center justify-center text-xs">
-                      <i className="ri-user-line"></i>
-                    </div>
-                    <div className="w-8 h-8 rounded-full bg-gray-200 border-2 border-white flex items-center justify-center text-xs">
-                      <i className="ri-user-line"></i>
-                    </div>
-                    <div className="w-8 h-8 rounded-full bg-gray-200 border-2 border-white flex items-center justify-center text-xs">
-                      <i className="ri-user-line"></i>
-                    </div>
-                  </div>
-                  <button className="text-primary hover:text-primary/80">
-                    Gérer
-                  </button>
-                </div>
-              </div>
-            </div>
           </div>
 
           <div className="mt-8 text-center">
