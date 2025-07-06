@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-export default function Countdown({ unlockDate }) {
+export default function Countdown({ unlockDate, sortBy }) {
     const [timeLeft, setTimeLeft] = useState(getTimeLeft());
 
     function getTimeLeft() {
@@ -23,9 +23,9 @@ export default function Countdown({ unlockDate }) {
             setTimeLeft(getTimeLeft());
         }, 1000);
         return () => clearInterval(timer);
-    }, []);
+    }, [sortBy]);
 
-    if (!timeLeft) return <p className="text-green-600">🟢 Capsule disponible !</p>;
+    if (!timeLeft) return <p className="text-green-600">Capsule disponible !</p>;
 
     return (
         <span>

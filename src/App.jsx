@@ -29,6 +29,7 @@ function App() {
   const [timer, setTimer] = useState(0);
   const [files, setFiles] = useState([]);
   const [selectedCapsule, setSelectedCapsule] = useState(null);
+  const [sortBy, setSortBy] = useState("newest");
 
   const [formData, setFormData] = useState({
     capsuleName: "",
@@ -44,13 +45,6 @@ function App() {
       [name]: value,
     }));
   };
-
-  function afficherAdresseAbregee(adresse, debut = 6, fin = 4) {
-    if (!adresse || adresse.length < debut + fin) {
-      return adresse;
-    }
-    return `${adresse.slice(0, debut)}...${adresse.slice(-fin)}`;
-  }
 
   setInterval(() => {
     setTimer(timer + 1);
@@ -107,12 +101,6 @@ function App() {
     });
 
     return res.data.IpfsHash;
-  };
-
-  const removeFile = (index) => {
-    const updatedFiles = [...files];
-    updatedFiles.splice(index, 1);
-    setFiles(updatedFiles);
   };
 
   async function mintCapsule() {
@@ -199,7 +187,6 @@ function App() {
     }
   }
 
-
   async function getCapsule(id) {
     if (!contract) return;
     try {
@@ -221,8 +208,24 @@ function App() {
     }
   }
 
+
+  // FONCTIONS UTILITAIRES
+
+  function afficherAdresseAbregee(adresse, debut = 6, fin = 4) {
+    if (!adresse || adresse.length < debut + fin) {
+      return adresse;
+    }
+    return `${adresse.slice(0, debut)}...${adresse.slice(-fin)}`;
+  }
+
+  const removeFile = (index) => {
+    const updatedFiles = [...files];
+    updatedFiles.splice(index, 1);
+    setFiles(updatedFiles);
+  };
+
   function formatTimestamp(timestampBigInt) {
-    const date = new Date(Number(timestampBigInt) * 1000); // convertir en millisecondes
+    const date = new Date(Number(timestampBigInt) * 1000);
 
     const yyyy = date.getFullYear();
     const mm = String(date.getMonth() + 1).padStart(2, "0");
@@ -235,10 +238,35 @@ function App() {
     return `${dd}-${mm}-${yyyy} à ${hh}:${min}:${sec}`;
   }
 
+  function sortCapsules(capsules, sortBy) {
+    const sorted = [...capsules];
+
+    switch (sortBy) {
+      case "newest":
+        return sorted.sort((a, b) => Number(b.createdAt) - Number(a.createdAt));
+      case "oldest":
+        return sorted.sort((a, b) => Number(a.createdAt) - Number(b.createdAt));
+      case "updated-recent":
+        return sorted.sort((a, b) => Number(b.updatedAt) - Number(a.updatedAt));
+      case "updated-oldest":
+        return sorted.sort((a, b) => Number(a.updatedAt) - Number(b.updatedAt));
+      case "name-az":
+        return sorted.sort((a, b) => a.name.localeCompare(b.name));
+      case "name-za":
+        return sorted.sort((a, b) => b.name.localeCompare(a.name));
+      default:
+        return capsules;
+    }
+  }
+
+
   useEffect(() => {
     connectWallet();
     fetchAllCapsules();
   }, [timer]);
+
+  const sortedCapsules = sortCapsules(allCapsules, sortBy);
+
 
   return <>
     <Header walletConnected={walletConnected} account={account} connectWallet={connectWallet} />
@@ -341,7 +369,7 @@ function App() {
                         className="form-control px-4 py-2 rounded-button whitespace-nowrap"
                         required
                         type="file"
-                        accept="image/*"
+                        accept="*"
                         id="formFile"
                         name="image"
                         multiple
@@ -542,24 +570,21 @@ function App() {
               </div>
               <div className="relative">
                 <div className="dropdown">
-                  <button className="flex items-center px-4 py-2 border border-gray-300 rounded-lg text-gray-700" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <span>Trier par</span>
-                    <div className="w-4 h-4 flex items-center justify-center ml-2">
-                      <i className="ri-arrow-down-s-line"></i>
-                    </div>
-                  </button>
-                  <ul className="dropdown-menu">
-                    <li><a className="dropdown-item" href="#">Action</a></li>
-                    <li><a className="dropdown-item" href="#">Another action</a></li>
-                    <li><a className="dropdown-item" href="#">Something else here</a></li>
-                  </ul>
+                  <select onChange={(e) => setSortBy(e.target.value)} className="flex items-center px-4 py-2 border border-gray-300 rounded-lg text-gray-700 form-control form-select">
+                    <option value="newest">Plus récentes</option>
+                    <option value="oldest">Plus anciennes</option>
+                    <option value="updated-recent">Modifiées récemment</option>
+                    <option value="updated-oldest">Modifiées il y a longtemps</option>
+                    <option value="name-az">Nom A-Z</option>
+                    <option value="name-za">Nom Z-A</option>
+                  </select>
                 </div>
               </div>
             </div>
           </div>
 
           <div className="grid md:grid-cols-3 gap-6">
-            {allCapsules.map((cap, index) => (
+            {sortedCapsules.map((cap, index) => (
               <>
                 <div className="capsule-card bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300">
                   <div className="h-40 bg-gradient-to-r from-blue-500 to-indigo-600 relative">
@@ -589,7 +614,7 @@ function App() {
                         <i className="ri-lock-line"></i>
                       </div>
                       <span>
-                        <Countdown unlockDate={cap.unlockDate} />
+                        <Countdown unlockDate={cap.unlockDate} sortBy={sortBy} />
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
