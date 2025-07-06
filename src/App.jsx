@@ -13,7 +13,9 @@ import FAQ from "./layouts/Faq";
 
 import Swal from 'sweetalert2';
 import axios from 'axios';
+
 import Countdown from './components/Countdown';
+import CapsuleModal from "./components/CapsuleModal";
 
 
 function App() {
@@ -25,8 +27,8 @@ function App() {
   const [signer, setSigner] = useState(null);
   const [account, setAccount] = useState(null);
   const [timer, setTimer] = useState(0);
-
   const [files, setFiles] = useState([]);
+  const [selectedCapsule, setSelectedCapsule] = useState(null);
 
   const [formData, setFormData] = useState({
     capsuleName: "",
@@ -104,7 +106,7 @@ function App() {
       },
     });
 
-    return `ipfs://${res.data.IpfsHash}`;
+    return res.data.IpfsHash;
   };
 
   const removeFile = (index) => {
@@ -335,12 +337,11 @@ function App() {
                       </div>
                       <h3 className="text-lg font-medium mb-2">Glissez-déposez vos fichiers ici</h3>
                       <p className="text-gray-500 text-sm mb-4">Formats supportés: PDF, JPG, PNG, MP4 (Max. 100MB)</p>
-                      {/* <input type="file" className="bg-primary text-white px-4 py-2 rounded-button whitespace-nowrap" /> */}
                       <input
                         className="form-control px-4 py-2 rounded-button whitespace-nowrap"
-                        // required
+                        required
                         type="file"
-                        // accept="image/*"
+                        accept="image/*"
                         id="formFile"
                         name="image"
                         multiple
@@ -473,7 +474,7 @@ function App() {
                         </div>
                         <div className="pl-8">
                           <input
-                            type="date"
+                            type="datetime-local"
                             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary"
                             name='unlockDate'
                             value={formData.unlockDate}
@@ -558,53 +559,79 @@ function App() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-6">
-            {allCapsules.map((cap) => (
-              <div className="capsule-card bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300">
-                <div className="h-40 bg-gradient-to-r from-blue-500 to-indigo-600 relative">
-                  <div className="absolute top-3 right-3 bg-white/90 text-xs font-medium px-2 py-1 rounded-full">
-                    {cap.claimed ? 'Déverrouillée' : 'Verrouillée'}
-                  </div>
-                </div>
-                <div className="p-5">
-                  <h3 className="font-semibold text-lg mb-2">{cap.name}</h3>
-                  <div className="flex items-center text-sm text-gray-500 mb-3">
-                    <span>{cap.description}</span>
-                  </div>
-                  <div className="flex items-center text-sm text-gray-500 mb-3">
-                    <div className="w-4 h-4 flex items-center justify-center mr-1">
-                      <i className="ri-time-line"></i>
+            {allCapsules.map((cap, index) => (
+              <>
+                <div className="capsule-card bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300">
+                  <div className="h-40 bg-gradient-to-r from-blue-500 to-indigo-600 relative">
+                    <div className="absolute top-3 right-3 bg-white/90 text-xs font-medium px-2 py-1 rounded-full">
+                      {cap.claimed ? 'Déverrouillée' : 'Verrouillée'}
                     </div>
-                    <span>Créée le {formatTimestamp(cap.createdAt)}</span>
                   </div>
-                  <div className="flex items-center text-sm text-gray-500 mb-3">
-                    <div className="w-4 h-4 flex items-center justify-center mr-1">
-                      <i className="ri-user-line"></i>
+                  <div className="p-5">
+                    <h3 className="font-semibold text-lg mb-2">{cap.name}</h3>
+                    <div className="flex items-center text-sm text-gray-500 mb-3">
+                      <span>{cap.description}</span>
                     </div>
-                    <span>{afficherAdresseAbregee(cap.heir, 6, 7)}</span>
-                  </div>
-                  <div className="flex items-center text-sm text-gray-500 mb-4">
-                    <div className="w-4 h-4 flex items-center justify-center mr-1">
-                      <i className="ri-lock-line"></i>
+                    <div className="flex items-center text-sm text-gray-500 mb-3">
+                      <div className="w-4 h-4 flex items-center justify-center mr-1">
+                        <i className="ri-time-line"></i>
+                      </div>
+                      <span>Créée le {formatTimestamp(cap.createdAt)}</span>
                     </div>
-                    <span>
-                      <Countdown unlockDate={cap.unlockDate} />
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div className="flex -space-x-2">
-                      <div className="w-8 h-8 rounded-full bg-gray-200 border-2 border-white flex items-center justify-center text-xs">
+                    <div className="flex items-center text-sm text-gray-500 mb-3">
+                      <div className="w-4 h-4 flex items-center justify-center mr-1">
                         <i className="ri-user-line"></i>
                       </div>
-                      <div className="w-8 h-8 rounded-full bg-gray-200 border-2 border-white flex items-center justify-center text-xs">
-                        <i className="ri-user-line"></i>
-                      </div>
+                      <span>{afficherAdresseAbregee(cap.heir, 6, 7)}</span>
                     </div>
-                    <button className="text-primary hover:text-primary/80">
-                      Gérer
-                    </button>
+                    <div className="flex items-center text-sm text-gray-500 mb-4">
+                      <div className="w-4 h-4 flex items-center justify-center mr-1">
+                        <i className="ri-lock-line"></i>
+                      </div>
+                      <span>
+                        <Countdown unlockDate={cap.unlockDate} />
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div className="flex -space-x-2">
+                        <div className="w-8 h-8 rounded-full bg-gray-200 border-2 border-white flex items-center justify-center text-xs">
+                          <i className="ri-user-line"></i>
+                        </div>
+                        <div className="w-8 h-8 rounded-full bg-gray-200 border-2 border-white flex items-center justify-center text-xs">
+                          <i className="ri-user-line"></i>
+                        </div>
+                      </div>
+                      <button
+                        type='button'
+                        className="text-primary hover:text-primary/80"
+                        onClick={() => setSelectedCapsule(cap)}
+                      >
+                        Gérer
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
+
+                <CapsuleModal capsule={selectedCapsule} onClose={() => setSelectedCapsule(null)} />
+
+                <div class="modal fade" id={`exampleModal${index}`} tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                  <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                        {index}
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Save changes</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </>
             ))}
           </div>
 
