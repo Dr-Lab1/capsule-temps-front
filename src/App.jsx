@@ -16,6 +16,7 @@ import axios from 'axios';
 
 import Countdown from './components/Countdown';
 import CapsuleModal from "./components/CapsuleModal";
+import UpdateCapsuleModal from './components/UpdateCapsuleModal';
 
 
 function App() {
@@ -29,6 +30,7 @@ function App() {
   const [timer, setTimer] = useState(0);
   const [files, setFiles] = useState([]);
   const [selectedCapsule, setSelectedCapsule] = useState(null);
+  const [updateCapsule, setUpdateCapsule] = useState(null);
   const [sortBy, setSortBy] = useState("newest");
 
   const [formData, setFormData] = useState({
@@ -626,18 +628,46 @@ function App() {
                           <i className="ri-user-line"></i>
                         </div>
                       </div>
-                      <button
-                        type='button'
-                        className="text-primary hover:text-primary/80"
-                        onClick={() => setSelectedCapsule(cap)}
-                      >
-                        Gérer
-                      </button>
+
+                      <div class="dropdown">
+                        <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                          Gérer
+                        </button>
+                        <ul class="dropdown-menu">
+                          <li>
+                            <button
+                              type='button'
+                              className="dropdown-item text-primary hover:text-primary/80"
+                              onClick={() => setSelectedCapsule(cap)}
+                            >
+                              Voir
+                            </button>
+                          </li>
+                          <li>
+                            <button
+                              type='button'
+                              className="dropdown-item text-primary hover:text-primary/80"
+                              onClick={() => setUpdateCapsule(cap)}
+                            >
+                              Modifier
+                            </button>
+                          </li>
+                          <li>
+                            <button
+                              type='button'
+                              className="dropdown-item text-danger hover:text-primary/80"
+                            >
+                              Supprimer
+                            </button>
+                          </li>
+                        </ul>
+                      </div>
                     </div>
                   </div>
                 </div>
 
                 <CapsuleModal capsule={selectedCapsule} onClose={() => setSelectedCapsule(null)} />
+                <UpdateCapsuleModal capsule={updateCapsule} onClose={() => setUpdateCapsule(null)} />
 
                 <div class="modal fade" id={`exampleModal${index}`} tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                   <div class="modal-dialog modal-lg">
