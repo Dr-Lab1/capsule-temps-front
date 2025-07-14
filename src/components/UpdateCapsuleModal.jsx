@@ -38,6 +38,12 @@ export default function UpdateCapsuleModal({ capsule, onClose }) {
                                 <label for="description" class="form-label">Description</label>
                                 <textarea class="form-control" id="description" rows="3" value={capsule.description} />
                             </div>
+                            <div class="col-10 mb-3">
+                                <label for="name" class="form-label">Héritier</label>
+                                <input type="text" class="form-control" id="heir" value={capsule.heir}/>
+                            </div>
+
+                            
 
                         </div>
                         <div class="modal-footer">
