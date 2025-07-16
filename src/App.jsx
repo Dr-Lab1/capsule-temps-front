@@ -160,32 +160,83 @@ function App() {
 
   }
 
+  // async function fetchAllCapsules() {
+  //   if (!contract) return;
+  //   try {
+  //     const ids = await contract.getAllCapsules(); // retourne un tableau de tokenId
+  //     const result = await Promise.all(
+  //       ids.map(async (id) => {
+  //         const raw = await contract.getCapsule(id);
+
+  //         return {
+  //           id: id.toString(),
+  //           name: raw[0],
+  //           description: raw[1],
+  //           uri: raw[2],
+  //           unlockDate: raw[3],
+  //           heir: raw[4],
+  //           claimed: raw[5],
+  //           createdAt: raw[8],
+  //           updatedAt: raw[7],
+  //           deletedAt: raw[6],
+  //         };
+  //       })
+  //     );
+  //     console.log("🧠 Capsules :", result);
+  //     setAllCapsules(result);
+  //   } catch (err) {
+  //     console.error("Erreur de chargement des capsules :", err);
+  //   }
+  // }
+
   async function fetchAllCapsules() {
-    if (!contract) return;
+    if (!contract || !signer) return;
+
     try {
-      const ids = await contract.getAllCapsules(); // retourne un tableau de tokenId
+      const userAddress = (await signer.getAddress()).toLowerCase();
+      const ids = await contract.getAllCapsules();
+
       const result = await Promise.all(
         ids.map(async (id) => {
-          const raw = await contract.getCapsule(id);
+          try {
+            const raw = await contract.getCapsule(id);
+            const owner = (await contract.ownerOf(id)).toLowerCase();
 
-          return {
-            id: id.toString(),
-            name: raw[0],
-            description: raw[1],
-            uri: raw[2],
-            unlockDate: raw[3],
-            heir: raw[4],
-            claimed: raw[5],
-            createdAt: raw[8],
-            updatedAt: raw[7],
-            deletedAt: raw[6],
-          };
+            const claimed = raw.claimed ?? raw[5];
+            const heir = (raw.heir ?? raw[4]).toLowerCase();
+            const creatorOwns = owner === userAddress;
+            const isHeir = heir === userAddress;
+
+            const shouldDisplay =
+              !claimed && (creatorOwns || isHeir) // non réclamée visible par créateur ET héritier
+              || claimed && creatorOwns;          // (optionnel) cas post-transfert
+
+            if (!shouldDisplay) return null;
+
+            return {
+              id: id.toString(),
+              name: raw.name ?? raw[0],
+              description: raw.description ?? raw[1],
+              uri: raw.uri ?? raw[2],
+              unlockDate: raw.unlockDate ?? raw[3],
+              heir: raw.heir ?? raw[4],
+              claimed: claimed,
+              balance: raw.balance ?? raw[6],
+              deletedAt: raw.deletedAt ?? raw[9],
+              updatedAt: raw.updatedAt ?? raw[8],
+              createdAt: raw.createdAt ?? raw[7],
+            };
+          } catch (err) {
+            console.warn(`Capsule ${id} ignorée : ${err.message}`);
+            return null;
+          }
         })
       );
-      console.log("🧠 Capsules :", result);
-      setAllCapsules(result);
+
+      const filtered = result.filter((c) => c !== null && Number(c.deletedAt) === 0);
+      setAllCapsules(filtered);
     } catch (err) {
-      console.error("Erreur de chargement des capsules :", err);
+      console.error("❌ Erreur de chargement des capsules :", err);
     }
   }
 
