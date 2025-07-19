@@ -18,7 +18,7 @@ import Countdown from './components/Countdown';
 import CapsuleModal from "./components/CapsuleModal";
 import UpdateCapsuleModal from './components/UpdateCapsuleModal';
 
-
+ 
 function App() {
 
   const [capsule, setCapsule] = useState(null);
