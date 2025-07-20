@@ -18,7 +18,7 @@ import Countdown from './components/Countdown';
 import CapsuleModal from "./components/CapsuleModal";
 import UpdateCapsuleModal from './components/UpdateCapsuleModal';
 
- 
+
 function App() {
 
   const [capsule, setCapsule] = useState(null);
@@ -32,6 +32,7 @@ function App() {
   const [selectedCapsule, setSelectedCapsule] = useState(null);
   const [updateCapsule, setUpdateCapsule] = useState(null);
   const [sortBy, setSortBy] = useState("newest");
+  const [isLoading, setIsLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     capsuleName: "",
@@ -119,6 +120,7 @@ function App() {
     }
 
     try {
+      setIsLoading(true);
 
       const { heir, unlockDate, capsuleName, description } = formData;
       const date = Math.floor(new Date(unlockDate).getTime() / 1000);
@@ -156,6 +158,8 @@ function App() {
         title: 'Champ invalide',
         text: error.message,
       });
+    } finally {
+      setIsLoading(false);
     }
 
   }
@@ -496,17 +500,6 @@ function App() {
                           </label>
                           <div className="absolute top-3 right-3 w-4 h-4 bg-primary rounded-full"></div>
                         </div>
-
-                        <div className="border border-gray-200 rounded-lg p-4 cursor-pointer hover:border-primary">
-                          <input type="radio" name="nft-type" id="erc1155" className="sr-only" />
-                          <label for="erc1155" className="flex flex-col items-center cursor-pointer">
-                            <span className="w-8 h-8 flex items-center justify-center bg-gray-100 rounded-full mb-2">
-                              <i className="ri-nft-line text-gray-500"></i>
-                            </span>
-                            <span className="font-medium">ERC-1155</span>
-                            <span className="text-xs text-gray-500">NFT multiple</span>
-                          </label>
-                        </div>
                       </div>
                     </div>
                   </div>
@@ -540,28 +533,12 @@ function App() {
                       <label className="block text-sm font-medium text-gray-700 mb-2">Bénéficiaires</label>
                       <div className="flex items-center mb-3">
                         <input
-                          className="flex-1 px-4 py-2 border border-gray-300 rounded-l-lg"
+                          className="flex-1 px-4 py-2 border border-gray-300 rounded-lg"
                           placeholder="Adresse Ethereum ou ENS"
                           name="heir"
                           value={formData.heir}
                           onChange={handleChange}
                         />
-                        <button className="bg-primary text-white px-4 py-2 rounded-r-lg whitespace-nowrap">
-                          Ajouter
-                        </button>
-                      </div>
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between bg-gray-50 p-2 rounded-lg">
-                          <div className="flex items-center">
-                            <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center mr-2">
-                              <i className="ri-user-line text-primary"></i>
-                            </div>
-                            <span className="text-sm">0x7Fc9...3E4b</span>
-                          </div>
-                          <button className="text-gray-500 hover:text-red-500">
-                            <i className="ri-close-line"></i>
-                          </button>
-                        </div>
                       </div>
                     </div>
 
@@ -569,7 +546,6 @@ function App() {
                       <label className="block text-sm font-medium text-gray-700 mb-2">Conditions de déverrouillage</label>
                       <div className="space-y-4">
                         <div className="flex items-center">
-                          <input type="checkbox" id="date-condition" className="custom-checkbox mr-2" />
                           <label for="date-condition" className="text-sm">Date spécifique</label>
                         </div>
                         <div className="pl-8">
@@ -582,7 +558,7 @@ function App() {
                           />
                         </div>
 
-                        <div className="flex items-center">
+                        {/* <div className="flex items-center">
                           <input type="checkbox" id="inactivity-condition" className="custom-checkbox mr-2" />
                           <label for="inactivity-condition" className="text-sm">Période d'inactivité</label>
                         </div>
@@ -595,7 +571,7 @@ function App() {
                             <span>6 mois</span>
                             <span>36 mois</span>
                           </div>
-                        </div>
+                        </div> */}
                       </div>
                     </div>
 
@@ -604,16 +580,19 @@ function App() {
                     </div>
 
                     <div className="border-t border-gray-200 pt-6">
-                      <div className="flex items-center justify-between mb-4">
-                        <span className="text-sm text-gray-600">Frais de gas estimés:</span>
-                        <span className="font-medium">~0.0042 ETH</span>
-                      </div>
                       <button
                         type='button'
                         onClick={mintCapsule}
                         className="w-full bg-primary hover:bg-primary/90 text-white py-3 rounded-button whitespace-nowrap font-medium"
                       >
-                        Créer ma capsule temporelle
+                        {isLoading ? (
+                          <>
+                            <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            Création en cours...
+                          </>
+                        ) : (
+                          "Créer ma capsule temporelle"
+                        )}
                       </button>
                     </div>
                   </div>

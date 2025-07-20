@@ -10,7 +10,9 @@ export function Header({ walletConnected, account, connectWallet }) {
     return <header className="bg-white shadow-sm">
         <div className="container mx-auto px-4 py-3 flex items-center justify-between">
             <div className="flex items-center">
-                <h1 className="text-2xl font-['Pacifico'] text-primary">CapsuleTemps</h1>
+                <a href="/">
+                    <h1 className="text-2xl font-['Pacifico'] text-primary">CapsuleTemps</h1>
+                </a>
                 <nav className="hidden md:flex ml-10">
                     <a href="/" className="px-4 py-2 text-gray-700 hover:text-primary font-medium">Accueil</a>
                     <a href="#how-it-works" className="px-4 py-2 text-gray-700 hover:text-primary font-medium">Comment ça marche</a>
