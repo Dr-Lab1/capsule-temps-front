@@ -339,7 +339,7 @@ function App() {
     connectWallet();
     fetchAllCapsules();
     claimAvailableCapsules();
-  }, [timer]);
+  }, [timer, isLoading]);
 
   const sortedCapsules = sortCapsules(allCapsules, sortBy);
 
@@ -420,12 +420,12 @@ function App() {
                   <li className="nav-item" role="presentation">
                     <button className="tab-button active px-4 py-2 rounded-full whitespace-nowrap text-sm font-medium text-gray-700 nav-link" id="pills-documents-tab" data-bs-toggle="pill" data-bs-target="#pills-documents" type="button" role="tab" aria-controls="pills-documents" aria-selected="true">Documents</button>
                   </li>
-                  <li className="nav-item" role="presentation">
+                  {/* <li className="nav-item" role="presentation">
                     <button className="tab-button px-4 py-2 rounded-full whitespace-nowrap text-sm font-medium text-gray-700 nav-link" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">Cryptos</button>
                   </li>
                   <li className="nav-item" role="presentation">
                     <button className="tab-button px-4 py-2 rounded-full whitespace-nowrap text-sm font-medium text-gray-700 nav-link" id="pills-contact-tab" data-bs-toggle="pill" data-bs-target="#pills-contact" type="button" role="tab" aria-controls="pills-contact" aria-selected="false">Messages</button>
-                  </li>
+                  </li> */}
                 </ul>
               </div>
 
@@ -548,7 +548,7 @@ function App() {
                         <div className="flex items-center">
                           <label for="date-condition" className="text-sm">Date spécifique</label>
                         </div>
-                        <div className="pl-8">
+                        <div className="">
                           <input
                             type="datetime-local"
                             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary"
@@ -635,115 +635,144 @@ function App() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-6">
-            {sortedCapsules.map((cap, index) => (
-              <>
-                <div className="capsule-card bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300">
-                  <div className="h-40 bg-gradient-to-r from-blue-500 to-indigo-600 relative">
-                    <div className="absolute top-3 right-3 bg-white/90 text-xs font-medium px-2 py-1 rounded-full">
-                      {cap.claimed ? 'Déverrouillée' : 'Verrouillée'}
-                    </div>
-                  </div>
-                  <div className="p-5">
-                    <h3 className="font-semibold text-lg mb-2">{cap.name}</h3>
-                    <div className="flex items-center text-sm text-gray-500 mb-3">
-                      <span>{cap.description}</span>
-                    </div>
-                    <div className="flex items-center text-sm text-gray-500 mb-3">
-                      <div className="w-4 h-4 flex items-center justify-center mr-1">
-                        <i className="ri-time-line"></i>
-                      </div>
-                      <span>Créée le {formatTimestamp(cap.createdAt)}</span>
-                    </div>
-                    <div className="flex items-center text-sm text-gray-500 mb-3">
-                      <div className="w-4 h-4 flex items-center justify-center mr-1">
-                        <i className="ri-user-line"></i>
-                      </div>
-                      <span>{afficherAdresseAbregee(cap.heir, 6, 7)}</span>
-                    </div>
-                    <div className="flex items-center text-sm text-gray-500 mb-4">
-                      <div className="w-4 h-4 flex items-center justify-center mr-1">
-                        <i className="ri-lock-line"></i>
-                      </div>
-                      <span>
-                        <Countdown unlockDate={cap.unlockDate} sortBy={sortBy} />
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <div className="flex -space-x-2">
-                        <div className="w-8 h-8 rounded-full bg-gray-200 border-2 border-white flex items-center justify-center text-xs">
-                          <i className="ri-user-line"></i>
-                        </div>
-                        <div className="w-8 h-8 rounded-full bg-gray-200 border-2 border-white flex items-center justify-center text-xs">
-                          <i className="ri-user-line"></i>
+
+            {
+              sortedCapsules ? (
+                sortedCapsules.map((cap, index) => (
+                  <>
+                    <div className="capsule-card bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300">
+                      <div className="h-40 bg-gradient-to-r from-blue-500 to-indigo-600 relative">
+                        <div className="absolute top-3 right-3 bg-white/90 text-xs font-medium px-2 py-1 rounded-full">
+                          {cap.claimed ? 'Déverrouillée' : 'Verrouillée'}
                         </div>
                       </div>
+                      <div className="p-5">
+                        <h3 className="font-semibold text-lg mb-2">{cap.name}</h3>
+                        <div className="flex items-center text-sm text-gray-500 mb-3">
+                          <span>{cap.description}</span>
+                        </div>
+                        <div className="flex items-center text-sm text-gray-500 mb-3">
+                          <div className="w-4 h-4 flex items-center justify-center mr-1">
+                            <i className="ri-time-line"></i>
+                          </div>
+                          <span>Créée le {formatTimestamp(cap.createdAt)}</span>
+                        </div>
+                        <div className="flex items-center text-sm text-gray-500 mb-3">
+                          <div className="w-4 h-4 flex items-center justify-center mr-1">
+                            <i className="ri-user-line"></i>
+                          </div>
+                          <span>{afficherAdresseAbregee(cap.heir, 6, 7)}</span>
+                        </div>
+                        {
+                          cap.claimed ? (
+                            <div className="flex items-center text-sm text-gray-500 mb-4">
+                              <div className="w-4 h-4 flex items-center justify-center mr-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-unlock" viewBox="0 0 16 16">
+                                  <path fill-rule="evenodd" d="M12 0a4 4 0 0 1 4 4v2.5h-1V4a3 3 0 1 0-6 0v2h.5A2.5 2.5 0 0 1 12 8.5v5A2.5 2.5 0 0 1 9.5 16h-7A2.5 2.5 0 0 1 0 13.5v-5A2.5 2.5 0 0 1 2.5 6H8V4a4 4 0 0 1 4-4M2.5 7A1.5 1.5 0 0 0 1 8.5v5A1.5 1.5 0 0 0 2.5 15h7a1.5 1.5 0 0 0 1.5-1.5v-5A1.5 1.5 0 0 0 9.5 7z" />
+                                </svg>
+                              </div>
+                              <span className='text-green-500'>
+                                La capsule vous appartient
+                              </span>
+                            </div>
+                          ) : (
+                            <div className="flex items-center text-sm text-gray-500 mb-4">
+                              <div className="w-4 h-4 flex items-center justify-center mr-1">
+                                <i className="ri-lock-line"></i>
+                              </div>
+                              <span>
+                                <Countdown unlockDate={cap.unlockDate} sortBy={sortBy} />
+                              </span>
+                            </div>
+                          )
+                        }
+                        <div className="flex items-center justify-between">
+                          <div className="flex -space-x-2">
+                            <div className="w-8 h-8 rounded-full bg-gray-200 border-2 border-white flex items-center justify-center text-xs">
+                              <i className="ri-user-line"></i>
+                            </div>
+                            <div className="w-8 h-8 rounded-full bg-gray-200 border-2 border-white flex items-center justify-center text-xs">
+                              <i className="ri-user-line"></i>
+                            </div>
+                          </div>
 
-                      <div class="dropdown">
-                        <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                          Gérer
-                        </button>
-                        <ul class="dropdown-menu">
-                          <li>
-                            <button
-                              type='button'
-                              className="dropdown-item text-primary hover:text-primary/80"
-                              onClick={() => setSelectedCapsule(cap)}
-                            >
-                              Voir
+                          <div class="dropdown">
+                            <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                              Gérer
                             </button>
-                          </li>
-                          <li>
-                            <button
-                              type='button'
-                              className="dropdown-item text-primary hover:text-primary/80"
-                              onClick={() => setUpdateCapsule(cap)}
-                            >
-                              Modifier
-                            </button>
-                          </li>
-                          <li>
-                            <button
-                              type='button'
-                              className="dropdown-item text-danger hover:text-primary/80"
-                            >
-                              Supprimer
-                            </button>
-                          </li>
-                        </ul>
+                            <ul class="dropdown-menu">
+                              <li>
+                                <button
+                                  type='button'
+                                  className="dropdown-item text-primary hover:text-primary/80"
+                                  onClick={() => setSelectedCapsule(cap)}
+                                >
+                                  Voir
+                                </button>
+                              </li>
+                              <li>
+                                <button
+                                  type='button'
+                                  className="dropdown-item text-primary hover:text-primary/80"
+                                  onClick={() => setUpdateCapsule(cap)}
+                                >
+                                  Modifier
+                                </button>
+                              </li>
+                              <li>
+                                <button
+                                  type='button'
+                                  className="dropdown-item text-danger hover:text-primary/80"
+                                >
+                                  Supprimer
+                                </button>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </div>
 
-                <CapsuleModal capsule={selectedCapsule} onClose={() => setSelectedCapsule(null)} />
-                <UpdateCapsuleModal capsule={updateCapsule} onClose={() => setUpdateCapsule(null)} />
+                    <CapsuleModal capsule={selectedCapsule} onClose={() => setSelectedCapsule(null)} />
+                    <UpdateCapsuleModal capsule={updateCapsule} onClose={() => setUpdateCapsule(null)} />
 
-                <div class="modal fade" id={`exampleModal${index}`} tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                  <div class="modal-dialog modal-lg">
-                    <div class="modal-content">
-                      <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                      </div>
-                      <div class="modal-body">
-                        {index}
-                      </div>
-                      <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary">Save changes</button>
+                    <div class="modal fade" id={`exampleModal${index}`} tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                      <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                            {index}
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary">Save changes</button>
+                          </div>
+                        </div>
                       </div>
                     </div>
+                  </>
+                ))
+              ) : (
+                <div className="text-center my-5">
+                  <div className="spinner-border text-primary" role="status">
+                    <span className="visually-hidden">Chargement des capsules...</span>
                   </div>
+                  <p className="mt-2">Chargement des capsules...</p>
                 </div>
-              </>
-            ))}
+              )
+            }
+
+
           </div>
 
-          <div className="mt-8 text-center">
+          {/* <div className="mt-8 text-center">
             <button className="text-primary hover:text-primary/80 font-medium">
               Voir toutes mes capsules
             </button>
-          </div>
+          </div> */}
         </div>
       </section>
 
