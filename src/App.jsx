@@ -33,6 +33,7 @@ function App() {
   const [updateCapsule, setUpdateCapsule] = useState(null);
   const [sortBy, setSortBy] = useState("newest");
   const [isLoading, setIsLoading] = useState(false);
+  const [amount, setAmount] = useState("");
 
   const [formData, setFormData] = useState({
     capsuleName: "",
@@ -237,74 +238,93 @@ function App() {
   }
 
   async function claimAvailableCapsules() {
-  if (!contract || !signer) return;
+    if (!contract || !signer) return;
 
-  try {
-    const userAddress = (await signer.getAddress()).toLowerCase();
-    const ids = await contract.getAllCapsules();
+    try {
+      const userAddress = (await signer.getAddress()).toLowerCase();
+      const ids = await contract.getAllCapsules();
 
-    const eligible = [];
+      const eligible = [];
 
-    for (const id of ids) {
-      try {
-        const raw = await contract.getCapsule(id);
-        const heir = (raw.heir ?? raw[4]).toLowerCase();
-        const claimed = raw.claimed ?? raw[5];
-        const unlockDate = Number(raw.unlockDate ?? raw[3]);
-        const deletedAt = Number(raw.deletedAt ?? raw[9]);
+      for (const id of ids) {
+        try {
+          const raw = await contract.getCapsule(id);
+          const heir = (raw.heir ?? raw[4]).toLowerCase();
+          const claimed = raw.claimed ?? raw[5];
+          const unlockDate = Number(raw.unlockDate ?? raw[3]);
+          const deletedAt = Number(raw.deletedAt ?? raw[9]);
 
-        const isHeir = heir === userAddress;
-        const isUnlocked = unlockDate <= Math.floor(Date.now() / 1000);
-        const notClaimed = !claimed;
-        const notDeleted = deletedAt === 0;
+          const isHeir = heir === userAddress;
+          const isUnlocked = unlockDate <= Math.floor(Date.now() / 1000);
+          const notClaimed = !claimed;
+          const notDeleted = deletedAt === 0;
 
-        if (isHeir && isUnlocked && notClaimed && notDeleted) {
-          eligible.push(id);
+          if (isHeir && isUnlocked && notClaimed && notDeleted) {
+            eligible.push(id);
+          }
+        } catch (err) {
+          console.warn(`⚠️ Capsule ${id} ignorée : ${err.message}`);
         }
-      } catch (err) {
-        console.warn(`⚠️ Capsule ${id} ignorée : ${err.message}`);
       }
-    }
 
-    if (eligible.length === 0) {
-      console.log("Aucune capsule disponible à réclamer pour ce compte.");
-      return;
-    }
-
-    for (const id of eligible) {
-      try {
-        const tx = await contract.claimCapsule(id);
-        await tx.wait();
-        console.log(`Capsule #${id} réclamée avec succès`);
-      } catch (err) {
-        console.error(`Erreur lors du claim de #${id} :`, err.message);
+      if (eligible.length === 0) {
+        console.log("Aucune capsule disponible à réclamer pour ce compte.");
+        return;
       }
+
+      for (const id of eligible) {
+        try {
+          const tx = await contract.claimCapsule(id);
+          await tx.wait();
+          console.log(`Capsule #${id} réclamée avec succès`);
+        } catch (err) {
+          console.error(`Erreur lors du claim de #${id} :`, err.message);
+        }
+      }
+
+      console.log(`${eligible.length} capsule(s) réclamée(s) !`);
+    } catch (err) {
+      console.error("Erreur générale :", err);
     }
-
-    console.log(`${eligible.length} capsule(s) réclamée(s) !`);
-  } catch (err) {
-    console.error("Erreur générale :", err);
   }
-}
 
-async function deleteCapsule(tokenId) {
-  if (!contract || !signer) return;
+  async function deleteCapsule(tokenId) {
+    if (!contract || !signer) return;
 
-  const confirm = window.confirm("Es-tu sûr de vouloir supprimer cette capsule ?");
-  if (!confirm) return;
+    const confirm = window.confirm("Es-tu sûr de vouloir supprimer cette capsule ?");
+    if (!confirm) return;
 
-  try {
-    const tx = await contract.deleteCapsule(tokenId);
-    await tx.wait();
-    alert("Capsule supprimée avec succès !");
+    try {
+      const tx = await contract.deleteCapsule(tokenId);
+      await tx.wait();
+      alert("Capsule supprimée avec succès !");
 
-    // Recharge la liste
-    fetchAllCapsules();
-  } catch (err) {
-    console.error("Erreur lors de la suppression :", err.message);
-    alert("Erreur lors de la suppression de la capsule.");
+      // Recharge la liste
+      fetchAllCapsules();
+    } catch (err) {
+      console.error("Erreur lors de la suppression :", err.message);
+      alert("Erreur lors de la suppression de la capsule.");
+    }
   }
-}
+
+
+  const handleFund = async () => {
+    if (!amount || isNaN(amount)) return alert("Veuillez entrer un montant valide.");
+    try {
+      const tx = await contract.addFundsToCapsule(tokenId, {
+        value: ethers.parseEther(amount),
+      });
+
+      await tx.wait();
+      alert("Fonds ajoutés avec succès !");
+      setAmount("");
+      onSuccess?.(); // callback facultatif
+    } catch (err) {
+      console.error("Erreur :", err.message);
+      alert("Erreur : " + err.message);
+    }
+  }
+
 
 
   // FONCTIONS UTILITAIRES
@@ -733,7 +753,7 @@ async function deleteCapsule(tokenId) {
                                   Voir
                                 </button>
                               </li>
-                              <li>
+                              {/* <li>
                                 <button
                                   type='button'
                                   className="dropdown-item text-primary hover:text-primary/80"
@@ -741,7 +761,7 @@ async function deleteCapsule(tokenId) {
                                 >
                                   Modifier
                                 </button>
-                              </li>
+                              </li> */}
                               <li>
                                 <button
                                   type='button'
@@ -758,7 +778,7 @@ async function deleteCapsule(tokenId) {
                     </div>
 
                     <CapsuleModal capsule={selectedCapsule} onClose={() => setSelectedCapsule(null)} />
-                    <UpdateCapsuleModal capsule={updateCapsule} onClose={() => setUpdateCapsule(null)} />
+                    {/* <UpdateCapsuleModal capsule={updateCapsule} onClose={() => setUpdateCapsule(null)} /> */}
 
                     <div class="modal fade" id={`exampleModal${index}`} tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                       <div class="modal-dialog modal-lg">

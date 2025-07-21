@@ -110,6 +110,7 @@ contract CapsuleNFT is ERC721, Ownable {
         require(!capsules[tokenId].claimed, "Capsule already claimed");
 
         capsules[tokenId].balance += msg.value;
+        capsules[tokenId].updatedAt = block.timestamp;
     }
 
     function getCapsule(
