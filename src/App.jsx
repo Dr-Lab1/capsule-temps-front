@@ -237,51 +237,56 @@ function App() {
   }
 
   async function claimAvailableCapsules() {
-    if (!contract || !signer) return;
+  if (!contract || !signer) return;
 
-    try {
-      const userAddress = (await signer.getAddress()).toLowerCase();
-      const ids = await contract.getAllCapsules();
+  try {
+    const userAddress = (await signer.getAddress()).toLowerCase();
+    const ids = await contract.getAllCapsules();
 
-      const eligible = [];
+    const eligible = [];
 
-      for (const id of ids) {
-        try {
-          const raw = await contract.getCapsule(id);
-          const heir = (raw.heir ?? raw[4]).toLowerCase();
-          const claimed = raw.claimed ?? raw[5];
-          const unlockDate = Number(raw.unlockDate ?? raw[3]);
+    for (const id of ids) {
+      try {
+        const raw = await contract.getCapsule(id);
+        const heir = (raw.heir ?? raw[4]).toLowerCase();
+        const claimed = raw.claimed ?? raw[5];
+        const unlockDate = Number(raw.unlockDate ?? raw[3]);
+        const deletedAt = Number(raw.deletedAt ?? raw[9]);
 
-          const now = Math.floor(Date.now() / 1000);
-          const isReady = !claimed && unlockDate <= now;
-          const isHeir = heir === userAddress;
+        const isHeir = heir === userAddress;
+        const isUnlocked = unlockDate <= Math.floor(Date.now() / 1000);
+        const notClaimed = !claimed;
+        const notDeleted = deletedAt === 0;
 
-          if (isReady && isHeir) {
-            eligible.push(id);
-          }
-        } catch (err) {
-          console.warn(`Capsule ${id} ignorée : ${err.message}`);
+        if (isHeir && isUnlocked && notClaimed && notDeleted) {
+          eligible.push(id);
         }
+      } catch (err) {
+        console.warn(`⚠️ Capsule ${id} ignorée : ${err.message}`);
       }
-
-      if (eligible.length != 0) {
-
-        for (const id of eligible) {
-          try {
-            const tx = await contract.claimCapsule(id);
-            await tx.wait();
-            console.log(`Capsule #${id} réclamée avec succès`);
-          } catch (err) {
-            console.error(`Erreur lors du claim de #${id} :`, err.message);
-          }
-        }
-
-      }
-
-    } catch (err) {
-      console.error("Erreur lors du scan des capsules :", err);
     }
+
+    if (eligible.length === 0) {
+      console.log("Aucune capsule disponible à réclamer pour ce compte.");
+      return;
+    }
+
+    for (const id of eligible) {
+      try {
+        const tx = await contract.claimCapsule(id);
+        await tx.wait();
+        console.log(`Capsule #${id} réclamée avec succès`);
+      } catch (err) {
+        console.error(`Erreur lors du claim de #${id} :`, err.message);
+      }
+    }
+
+    console.log(`${eligible.length} capsule(s) réclamée(s) !`);
+  } catch (err) {
+    console.error("Erreur générale :", err);
   }
+}
+
 
 
   // FONCTIONS UTILITAIRES

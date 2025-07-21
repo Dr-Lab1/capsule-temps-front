@@ -50,6 +50,7 @@ contract CapsuleNFT is ERC721, Ownable {
         string memory uri
     ) external payable {
         require(unlockDate > block.timestamp, "Unlock date must be in future");
+        require(heir != msg.sender, "Heir cannot be the capsule creator");
 
         uint256 tokenId = nextTokenId++;
         _safeMint(msg.sender, tokenId);
