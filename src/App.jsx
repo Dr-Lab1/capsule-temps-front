@@ -287,6 +287,24 @@ function App() {
   }
 }
 
+async function deleteCapsule(tokenId) {
+  if (!contract || !signer) return;
+
+  const confirm = window.confirm("Es-tu sûr de vouloir supprimer cette capsule ?");
+  if (!confirm) return;
+
+  try {
+    const tx = await contract.deleteCapsule(tokenId);
+    await tx.wait();
+    alert("Capsule supprimée avec succès !");
+
+    // Recharge la liste
+    fetchAllCapsules();
+  } catch (err) {
+    console.error("Erreur lors de la suppression :", err.message);
+    alert("Erreur lors de la suppression de la capsule.");
+  }
+}
 
 
   // FONCTIONS UTILITAIRES
@@ -728,6 +746,7 @@ function App() {
                                 <button
                                   type='button'
                                   className="dropdown-item text-danger hover:text-primary/80"
+                                  onClick={() => deleteCapsule(cap.id)}
                                 >
                                   Supprimer
                                 </button>
