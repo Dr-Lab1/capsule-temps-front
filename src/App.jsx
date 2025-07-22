@@ -30,16 +30,15 @@ function App() {
   const [timer, setTimer] = useState(0);
   const [files, setFiles] = useState([]);
   const [selectedCapsule, setSelectedCapsule] = useState(null);
-  const [updateCapsule, setUpdateCapsule] = useState(null);
   const [sortBy, setSortBy] = useState("newest");
   const [isLoading, setIsLoading] = useState(false);
-  const [amount, setAmount] = useState("");
 
   const [formData, setFormData] = useState({
     capsuleName: "",
     heir: "",
     description: "",
     unlockDate: "",
+    balance: "",
   });
 
   const handleChange = (e) => {
@@ -123,7 +122,7 @@ function App() {
     try {
       setIsLoading(true);
 
-      const { heir, unlockDate, capsuleName, description } = formData;
+      const { heir, unlockDate, capsuleName, description, balance } = formData;
       const date = Math.floor(new Date(unlockDate).getTime() / 1000);
 
       if (!date || isNaN(date)) {
@@ -144,6 +143,9 @@ function App() {
         capsuleName,
         description,
         uri,
+        {
+          value: ethers.parseEther(balance)
+        }
       );
       await tx.wait();
 
@@ -152,6 +154,18 @@ function App() {
         title: 'Création de la capsule réussie',
         text: 'Votre Capsule a été créée avec succès !',
       });
+
+      setFormData(
+        {
+          capsuleName: "",
+          heir: "",
+          description: "",
+          unlockDate: "",
+          balance: "",
+        }
+      );
+
+      setFiles([]);
 
     } catch (error) {
       Swal.fire({
@@ -306,25 +320,6 @@ function App() {
       alert("Erreur lors de la suppression de la capsule.");
     }
   }
-
-
-  const handleFund = async () => {
-    if (!amount || isNaN(amount)) return alert("Veuillez entrer un montant valide.");
-    try {
-      const tx = await contract.addFundsToCapsule(tokenId, {
-        value: ethers.parseEther(amount),
-      });
-
-      await tx.wait();
-      alert("Fonds ajoutés avec succès !");
-      setAmount("");
-      onSuccess?.(); // callback facultatif
-    } catch (err) {
-      console.error("Erreur :", err.message);
-      alert("Erreur : " + err.message);
-    }
-  }
-
 
 
   // FONCTIONS UTILITAIRES
@@ -586,11 +581,24 @@ function App() {
                     </div>
 
                     <div className="mb-6">
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Conditions de déverrouillage</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Balance</label>
+                      <div className="flex items-center mb-3">
+                        <input
+                          type="number"
+                          className="flex-1 px-4 py-2 border border-gray-300 rounded-lg"
+                          placeholder="Montant en ETH"
+                          value={formData.balance}
+                          onChange={handleChange}
+                          name="balance"
+                          min="0"
+                          step="0.0001"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="mb-6">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Conditions de déverrouillage (Date spécifique)</label>
                       <div className="space-y-4">
-                        <div className="flex items-center">
-                          <label for="date-condition" className="text-sm">Date spécifique</label>
-                        </div>
                         <div className="">
                           <input
                             type="datetime-local"
@@ -601,20 +609,6 @@ function App() {
                           />
                         </div>
 
-                        {/* <div className="flex items-center">
-                          <input type="checkbox" id="inactivity-condition" className="custom-checkbox mr-2" />
-                          <label for="inactivity-condition" className="text-sm">Période d'inactivité</label>
-                        </div>
-                        <div className="pl-8">
-                          <div className="mb-2">
-                            <input type="range" min="1" max="36" value="6" className="custom-range" />
-                          </div>
-                          <div className="flex justify-between text-xs text-gray-500">
-                            <span>1 mois</span>
-                            <span>6 mois</span>
-                            <span>36 mois</span>
-                          </div>
-                        </div> */}
                       </div>
                     </div>
 
