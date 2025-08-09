@@ -119,6 +119,16 @@ function App() {
       return;
     }
 
+    if (formData.balance < 0) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Champ invalide',
+        text: 'La balance ne peut pas être négative !',
+      });
+
+      return;
+    }
+
     try {
       setIsLoading(true);
 
